@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECU Mathematics 1 - Final Exam 2024/2025 Solved</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Fira+Code:wght@400;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for rendering equations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+
+    <style>
+        :root {
+            --bg-color: #0d0f12;
+            --panel-bg: rgba(22, 27, 34, 0.7);
+            --border-color: rgba(255, 0, 127, 0.25);
+            --primary-neon: #ff007f;
+            --secondary-neon: #00f2fe;
+            --text-color: #f0f3f6;
+            --text-muted: #8b949e;
+            --success-color: #2ea44f;
+            --accent-purple: #9d4edd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 0, 127, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Poppins', 'Cairo', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            direction: ltr;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Style */
+        header {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(255, 0, 127, 0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-neon), var(--secondary-neon));
+        }
+
+        .ecu-logo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary-neon);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff007f, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 0, 127, 0.2);
+        }
+
+        .exam-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: left;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+        }
+
+        .meta-item {
+            color: var(--text-muted);
+        }
+
+        .meta-item strong {
+            color: var(--text-color);
+        }
+
+        /* Action Buttons */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--primary-neon);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            border-color: var(--primary-neon);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border-color: var(--secondary-neon);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-neon);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            border-color: var(--secondary-neon);
+            color: #000;
+        }
+
+        /* Question Cards */
+        .question-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+
+        .question-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-neon);
+            text-shadow: 0 0 10px rgba(255, 0, 127, 0.3);
+        }
+
+        .question-marks {
+            background: rgba(255, 0, 127, 0.15);
+            border: 1px solid var(--primary-neon);
+            color: var(--primary-neon);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Sub-question */
+        .sub-question {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--secondary-neon);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sub-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .sub-label {
+            color: var(--secondary-neon);
+            font-size: 1.1rem;
+        }
+
+        .sub-marks {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .problem-statement {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            overflow-x: auto;
+        }
+
+        /* Solution reveal container */
+        .solution-toggle {
+            background: transparent;
+            border: 1px solid var(--secondary-neon);
+            color: var(--secondary-neon);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        .solution-toggle:hover {
+            background: rgba(0, 242, 254, 0.1);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        .solution-content {
+            display: none;
+            margin-top: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(0, 242, 254, 0.3);
+            border-radius: 8px;
+            animation: slideDown 0.4s ease forwards;
+            direction: rtl;
+            text-align: right;
+            line-height: 1.8;
+            font-family: 'Cairo', 'Poppins', sans-serif;
+        }
+
+        .zain-tip {
+            background: rgba(157, 78, 221, 0.15);
+            border-right: 4px solid var(--accent-purple);
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            color: #d8b4fe;
+        }
+
+        .zain-tip strong {
+            color: #f3e8ff;
+        }
+
+        /* LaTeX Equations within RTL solutions */
+        .solution-content .math-block {
+            direction: ltr;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .heart {
+            color: var(--primary-neon);
+            display: inline-block;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            to { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header>
+        <div class="ecu-logo">EGYPTIAN CHINESE UNIVERSITY</div>
+        <h1>Faculty of Computers & Information Systems</h1>
+        <h2 style="color: var(--text-muted); font-size: 1.3rem; margin-top: 5px;">Mathematics 1 - Final Exam 2024/2025</h2>
+        
+        <div class="exam-meta">
+            <div class="meta-item">📅 <strong>Date:</strong> 05/01/2025 (Fall-2024)</div>
+            <div class="meta-item">⏱️ <strong>Allowed Time:</strong> 2 Hours</div>
+            <div class="meta-item">🎯 <strong>Total Marks:</strong> 40 Marks</div>
+            <div class="meta-item">👤 <strong>Examiners:</strong> Dr. Essam Hamza & Dr. Hazem Elsadek</div>
+        </div>
+    </header>
+
+    <!-- Navigation Action Bar -->
+    <div class="action-bar">
+        <a href="index.html" class="btn"><i class="home-icon">🏠</i> Back to Main Hub</a>
+        <button class="btn btn-secondary" onclick="toggleAllSolutions()">🔓 Reveal All Solutions</button>
+    </div>
+
+    <!-- QUESTION 1 -->
+    <div class="question-card">
+        <div class="question-header">
+            <div class="question-title">Question 1</div>
+            <div class="question-marks">10 Marks Total</div>
+        </div>
+
+        <!-- 1.a -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">a) Find the Domain and Range of the function:</span>
+                <span class="sub-marks">(2 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                $$f(x) = \sqrt{x - 5}$$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                <p>1. أولاً نجيب <strong>المجال (Domain)</strong>: دايماً عود نفسك يا هندسة، طالما عندك جذر تربيعي يبقى لازم القيمة اللي تحت الجذر تكون أكبر من أو تساوي صفر عشان متطلعش أعداد تخيلية:</p>
+                <div class="math-block">
+                    $$x - 5 \ge 0 \implies x \ge 5$$
+                </div>
+                <p>إذن المجال هو:</p>
+                <div class="math-block">
+                    $$\text{Domain} = [5, \infty)$$
+                </div>
+
+                <p>2. ثانياً نجيب <strong>المدى (Range)</strong>: المدى هو كل قيم المخرجات الممكنة للدالة. بما إن دالة الجذر التربيعي بتطلع دايماً نواتج موجبة أو صفر، ومضروبة في معامل موجب برة، يبقى أقل قيمة تطلع هي صفر (لما نعوض بـ $x=5$)، وأكبر قيمة هتروح للما لا نهاية:</p>
+                <div class="math-block">
+                    $$\text{Range} = [0, \infty)$$
+                </div>
+
+                <div class="zain-tip">
+                    💡 <strong>فكرة هندسية سريعة:</strong> عشان تتخيلها، رسمة الدالة دي هي نفس رسمة $\sqrt{x}$ بس معمورلها إزاحة أفقية لليمين بمقدار 5 خطوات. البداية من $x=5$ والـ $y$ بتبدأ من $0$ وتزيد!
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.b -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">b) Find the inverse of the following One-to-One function:</span>
+                <span class="sub-marks">(2 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                $$f(x) = \frac{1}{5} x^3 - 2$$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                <p>1. عشان نجيب الدالة العكسية $f^{-1}(x)$، بنكتب المعادلة الأصلية بوضع $y$ مكان $f(x)$:</p>
+                <div class="math-block">
+                    $$y = \frac{1}{5} x^3 - 2$$
+                </div>
+                <p>2. بنبدل الـ $x$ والـ $y$ عشان نربط العكس:</p>
+                <div class="math-block">
+                    $$x = \frac{1}{5} y^3 - 2$$
+                </div>
+                <p>3. دلوقتي هدفنا يا هندسة نخلي الـ $y$ لوحدها في طرف. نودي الـ $2$ بعكس الإشارة الناحية التانية:</p>
+                <div class="math-block">
+                    $$x + 2 = \frac{1}{5} y^3$$
+                </div>
+                <p>4. نضرب الطرفين في $5$ عشان نتخلص من الخُمس:</p>
+                <div class="math-block">
+                    $$5(x + 2) = y^3 \implies y^3 = 5x + 10$$
+                </div>
+                <p>5. نأخذ الجذر التكعيبي للطرفين عشان نجيب $y$ لوحدها:</p>
+                <div class="math-block">
+                    $$y = \sqrt[3]{5x + 10}$$
+                </div>
+                <p>إذن الدالة العكسية هي:</p>
+                <div class="math-block">
+                    $$f^{-1}(x) = \sqrt[3]{5x + 10}$$
+                </div>
+
+                <div class="zain-tip">
+                    💡 <strong>تأكيد المهندس:</strong> لو عايز تتأكد إن حلك صح 100%، اعمل تركيب للدالة مع عكسها $f(f^{-1}(x))$، لازم يرجعلك الناتج النهائي $x$!
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.c -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">c) For the given functions, find $f \circ g$ and $g \circ f$:</span>
+                <span class="sub-marks">(2 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                $$f(x) = x^2 - 16 \quad , \quad g(x) = \sqrt{x}$$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                <p>1. لإيجاد التركيب الأول <strong>$(f \circ g)(x)$</strong>، بنعوض بالدالة $g(x)$ جوة كل $x$ في الدالة $f(x)$:</p>
+                <div class="math-block">
+                    $$(f \circ g)(x) = f(g(x)) = f(\sqrt{x})$$
+                </div>
+                <div class="math-block">
+                    $$(f \circ g)(x) = (\sqrt{x})^2 - 16 = x - 16 \quad (\text{with } x \ge 0)$$
+                </div>
+
+                <p>2. لإيجاد التركيب الثاني <strong>$(g \circ f)(x)$</strong>، بنعوض بالدالة $f(x)$ جوة كل $x$ في الدالة $g(x)$:</p>
+                <div class="math-block">
+                    $$(g \circ f)(x) = g(f(x)) = g(x^2 - 16)$$
+                </div>
+                <div class="math-block">
+                    $$(g \circ f)(x) = \sqrt{x^2 - 16} \quad (\text{with } |x| \ge 4)$$
+                </div>
+
+                <div class="zain-tip">
+                    💡 <strong>ملحوظة مهمة للمجال:</strong> في $(f \circ g)$ لازم ناخد بالنا إن المدخل الأصلي $x$ جوة جذر، فشرطه $x \ge 0$. أما في $(g \circ f)$ لازم ما تحت الجذر يكون موجب، أي $x^2 - 16 \ge 0 \implies x^2 \ge 16 \implies x \ge 4$ أو $x \le -4$.
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.d -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">d) Differentiate the following functions:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $f(x) = (3x^5 + 4x) \cdot \tan(x)$ <br><br>
+                <strong>ii)</strong> $f(x) = \frac{2x^4 + 5}{4x^3 - 3x}$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> حاصل ضرب دالتين (Product Rule):<br>
+                القانون: مشتقة الأول × الثاني + الأول × مشتقة الثاني</p>
+                <div class="math-block">
+                    $$u = 3x^5 + 4x \implies u' = 15x^4 + 4$$
+                    $$v = \tan(x) \implies v' = \sec^2(x)$$
+                </div>
+                <p>بالتطبيق المباشر:</p>
+                <div class="math-block">
+                    $$f'(x) = (15x^4 + 4) \cdot \tan(x) + (3x^5 + 4x) \cdot \sec^2(x)$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> خارج قسمة دالتين (Quotient Rule):<br>
+                القانون: (المقام × مشتقة البسط - البسط × مشتقة المقام) / (المقام)^2</p>
+                <div class="math-block">
+                    $$\text{numerator } (u) = 2x^4 + 5 \implies u' = 8x^3$$
+                    $$\text{denominator } (v) = 4x^3 - 3x \implies v' = 12x^2 - 3$$
+                </div>
+                <p>بالتطبيق المباشر:</p>
+                <div class="math-block">
+                    $$f'(x) = \frac{(4x^3 - 3x)(8x^3) - (2x^4 + 5)(12x^2 - 3)}{(4x^3 - 3x)^2}$$
+                </div>
+                <p>لو سبتها كده في الامتحان بتاخد الدرجة كاملة يا هندسة، بس للتبسيط الفخم في البسط:</p>
+                <div class="math-block">
+                    $$(32x^6 - 24x^4) - (24x^6 - 6x^4 + 60x^2 - 15) = 8x^6 - 18x^4 - 60x^2 + 15$$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION 2 -->
+    <div class="question-card">
+        <div class="question-header">
+            <div class="question-title">Question 2</div>
+            <div class="question-marks">10 Marks Total</div>
+        </div>
+
+        <!-- 2.a -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">a) Evaluate the following limits:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $\lim_{x \to 5} \frac{x^2 - 6x + 5}{x - 5}$ <br><br>
+                <strong>ii)</strong> $\lim_{x \to 0} \frac{\sqrt{9 + x} - 3}{x}$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> بالتعويض المباشر بـ $x=5$ يطلع الناتج $\frac{0}{0}$ (كمية غير معينة). نحلل البسط عشان نخلص من العامل الصفري $(x-5)$:</p>
+                <div class="math-block">
+                    $$x^2 - 6x + 5 = (x-5)(x-1)$$
+                </div>
+                <p>نعوض في النهاية:</p>
+                <div class="math-block">
+                    $$\lim_{x \to 5} \frac{(x-5)(x-1)}{x-5} = \lim_{x \to 5} (x - 1)$$
+                </div>
+                <p>بالتعويض المباشر الآن:</p>
+                <div class="math-block">
+                    $$5 - 1 = 4$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> بالتعويض المباشر بـ $x=0$ يطلع الناتج $\frac{0}{0}$. طالما فيه جذر تربيعي يبقى دايماً <strong>الضرب في المرافق</strong> هو الحل المنقذ:</p>
+                <p>نضرب البسط والمقام في مرافق البسط وهو $(\sqrt{9+x} + 3)$:</p>
+                <div class="math-block">
+                    $$\lim_{x \to 0} \frac{\sqrt{9+x} - 3}{x} \cdot \frac{\sqrt{9+x} + 3}{\sqrt{9+x} + 3}$$
+                </div>
+                <p>البسط ضرب المرافق بيدينا مربع الأول - مربع الثاني:</p>
+                <div class="math-block">
+                    $$(\sqrt{9+x})^2 - (3)^2 = 9 + x - 9 = x$$
+                </div>
+                <p>إذن الكسر يصبح:</p>
+                <div class="math-block">
+                    $$\lim_{x \to 0} \frac{x}{x(\sqrt{9+x} + 3)} = \lim_{x \to 0} \frac{1}{\sqrt{9+x} + 3}$$
+                </div>
+                <p>نعوض بـ $x=0$:</p>
+                <div class="math-block">
+                    $$\frac{1}{\sqrt{9+0} + 3} = \frac{1}{3 + 3} = \frac{1}{6}$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 2.b -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">b) Find the equation of the tangent line to:</span>
+                <span class="sub-marks">(2 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                $$y = 2x^3 \quad \text{at the Point } (1, 2)$$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                <p>1. أولاً نجيب <strong>ميل المماس (Slope of the tangent, $m$)</strong> وهو المشتقة الأولى للدالة $y'$ عند النقطة المعطاة:</p>
+                <div class="math-block">
+                    $$y' = \frac{d}{dx}(2x^3) = 6x^2$$
+                </div>
+                <p>2. نعوض بـ $x=1$ نجيب قيمة الميل الرقمية:</p>
+                <div class="math-block">
+                    $$m = 6(1)^2 = 6$$
+                </div>
+                <p>3. نستخدم معادلة المماس الشهيرة باستخدام النقطة $(x_1, y_1) = (1, 2)$ والميل $m=6$:</p>
+                <div class="math-block">
+                    $$y - y_1 = m(x - x_1) \implies y - 2 = 6(x - 1)$$
+                </div>
+                <p>4. نبسط المعادلة للصورة العامة $y = mx + c$:</p>
+                <div class="math-block">
+                    $$y - 2 = 6x - 6 \implies y = 6x - 4$$
+                </div>
+                <p>إذن معادلة المماس هي:</p>
+                <div class="math-block">
+                    $$y = 6x - 4$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 2.c -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">c) Differentiate the following functions:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $f(x) = (4x^5 - 6x)^7$ <br><br>
+                <strong>ii)</strong> $f(x) = \tan^{-1}(3x)$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> باستخدام قاعدة السلسلة لقوس مرفوع لأس (Chain Rule):<br>
+                بنزل الأس ونطرح منه واحد، ونضرب في تفاضل ما بداخل القوس:</p>
+                <div class="math-block">
+                    $$f'(x) = 7(4x^5 - 6x)^6 \cdot \frac{d}{dx}(4x^5 - 6x)$$
+                </div>
+                <div class="math-block">
+                    $$f'(x) = 7(4x^5 - 6x)^6 \cdot (20x^4 - 6)$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> تفاضل الدالة المثلثية العكسية $\tan^{-1}(u)$:<br>
+                القانون: مشتقة الزاوية مقسومة على ($1 + \text{الزاوية}^2$)</p>
+                <div class="math-block">
+                    $$u = 3x \implies u' = 3$$
+                </div>
+                <p>بالتطبيق في القانون:</p>
+                <div class="math-block">
+                    $$f'(x) = \frac{u'}{1 + u^2} = \frac{3}{1 + (3x)^2} = \frac{3}{1 + 9x^2}$$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION 3 -->
+    <div class="question-card">
+        <div class="question-header">
+            <div class="question-title">Question 3</div>
+            <div class="question-marks">10 Marks Total</div>
+        </div>
+
+        <!-- 3.a -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">a) Use Logarithmic differentiation to find $y'$:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $y = \frac{\sin^2 x \cdot \sqrt{x^2 - 9}}{(4x^3 + 2x)^6 \cdot (x - 5)^2}$ <br><br>
+                <strong>ii)</strong> $y = x^{\sin x}$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> المعادلة مليانة ضرب وقسمة وجذور، عشان كده الـ <strong>Logarithmic differentiation</strong> هو الحل السحري! بناخد اللوغاريتم الطبيعي $\ln$ للطرفين ونستخدم خواص اللين:</p>
+                <div class="math-block">
+                    $$\ln y = \ln \left( \frac{\sin^2 x \cdot \sqrt{x^2 - 9}}{(4x^3 + 2x)^6 \cdot (x - 5)^2} \right)$$
+                </div>
+                <p>بنوزع الضرب لجمع والقسمة لطرح وننزل الأسس برة اللين:</p>
+                <div class="math-block">
+                    $$\ln y = 2\ln(\sin x) + \frac{1}{2}\ln(x^2 - 9) - 6\ln(4x^3 + 2x) - 2\ln(x - 5)$$
+                </div>
+                <p>دلوقتي نشتق الطرفين بالنسبة لـ $x$ (تفاضل $\ln y$ هو $y'/y$):</p>
+                <div class="math-block">
+                    $$\frac{y'}{y} = 2\frac{\cos x}{\sin x} + \frac{1}{2}\frac{2x}{x^2 - 9} - 6\frac{12x^2 + 2}{4x^3 + 2x} - 2\frac{1}{x-5}$$
+                </div>
+                <p>نبسط الأطراف (مع العلم إن $\frac{\cos x}{\sin x} = \cot x$):</p>
+                <div class="math-block">
+                    $$\frac{y'}{y} = 2\cot x + \frac{x}{x^2 - 9} - \frac{6(12x^2 + 2)}{4x^3 + 2x} - \frac{2}{x-5}$$
+                </div>
+                <p>أخيراً، نضرب الطرفين في $y$ عشان نجيب الـ $y'$ لوحدها:</p>
+                <div class="math-block">
+                    $$y' = y \cdot \left[ 2\cot x + \frac{x}{x^2 - 9} - \frac{6(12x^2 + 2)}{4x^3 + 2x} - \frac{2}{x-5} \right]$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> دالة أس دالة $y = x^{\sin x}$. بناخد $\ln$ للطرفين عشان ننزل الأس:</p>
+                <div class="math-block">
+                    $$\ln y = \ln(x^{\sin x}) \implies \ln y = \sin x \cdot \ln x$$
+                </div>
+                <p>نشتق الطرفين كحاصل ضرب دالتين (الأولى × مشتقة الثانية + الثانية × مشتقة الأولى):</p>
+                <div class="math-block">
+                    $$\frac{y'}{y} = (\sin x) \cdot \left(\frac{1}{x}\right) + (\ln x) \cdot (\cos x)$$
+                </div>
+                <p>نضرب في $y$ لعزل $y'$:</p>
+                <div class="math-block">
+                    $$y' = y \cdot \left[ \frac{\sin x}{x} + \cos x \cdot \ln x \right]$$
+                </div>
+                <p>نعوض بقيمة $y$ الأصلية عشان يكون الحل كامل بدلالة $x$:</p>
+                <div class="math-block">
+                    $$y' = x^{\sin x} \cdot \left[ \frac{\sin x}{x} + \cos x \cdot \ln x \right]$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 3.b -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">b) Show that:</span>
+                <span class="sub-marks">(2 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                $$\cosh^2 x - \sinh^2 x = 1$$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                <p>إثبات الدوال الزائدية دايماً بيبدأ من كتابة التعريف الأسي للـ $\cosh x$ والـ $\sinh x$:</p>
+                <div class="math-block">
+                    $$\cosh x = \frac{e^x + e^{-x}}{2} \quad , \quad \sinh x = \frac{e^x - e^{-x}}{2}$$
+                </div>
+                <p>1. نربع الطرفين للـ $\cosh x$:</p>
+                <div class="math-block">
+                    $$\cosh^2 x = \left( \frac{e^x + e^{-x}}{2} \right)^2 = \frac{e^{2x} + 2e^x e^{-x} + e^{-2x}}{4} = \frac{e^{2x} + 2 + e^{-2x}}{4}$$
+                </div>
+                <p>2. نربع الطرفين للـ $\sinh x$:</p>
+                <div class="math-block">
+                    $$\sinh^2 x = \left( \frac{e^x - e^{-x}}{2} \right)^2 = \frac{e^{2x} - 2e^x e^{-x} + e^{-2x}}{4} = \frac{e^{2x} - 2 + e^{-2x}}{4}$$
+                </div>
+                <p>3. نطرحهم من بعض:</p>
+                <div class="math-block">
+                    $$\cosh^2 x - \sinh^2 x = \frac{(e^{2x} + 2 + e^{-2x}) - (e^{2x} - 2 + e^{-2x})}{4}$$
+                </div>
+                <div class="math-block">
+                    $$\cosh^2 x - \sinh^2 x = \frac{e^{2x} + 2 + e^{-2x} - e^{2x} + 2 - e^{-2x}}{4} = \frac{4}{4} = 1$$
+                </div>
+                <p>وهو المطلوب إثباته! خطوة بخطوة ومفيش أسهل من كده يا هندسة.</p>
+            </div>
+        </div>
+
+        <!-- 3.c -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">c) Differentiate the following functions:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $y = \tanh(5^{\sin x})$ <br><br>
+                <strong>ii)</strong> $f(x) = \ln(4x^3 + 6x)$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> تفاضل دالة الـ $\tanh(u)$ هو $\sec\text{h}^2(u) \cdot u'$:<br>
+                الزاوية هنا دالة أسية عامة $u = 5^{\sin x}$، تفاضلها هو نفس الدالة × $\ln$ الأساس × تفاضل الأس:</p>
+                <div class="math-block">
+                    $$u' = 5^{\sin x} \cdot \ln(5) \cdot \cos(x)$$
+                </div>
+                <p>إذن المشتقة الكلية هي:</p>
+                <div class="math-block">
+                    $$y' = \sec\text{h}^2(5^{\sin x}) \cdot 5^{\sin x} \cdot \ln(5) \cdot \cos(x)$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> تفاضل اللوغاريتم الطبيعي $\ln(u)$ هو مشتقة ما بداخل اللوغاريتم مقسومة عليه:</p>
+                <div class="math-block">
+                    $$u = 4x^3 + 6x \implies u' = 12x^2 + 6$$
+                </div>
+                <p>بالتطبيق في القانون:</p>
+                <div class="math-block">
+                    $$f'(x) = \frac{u'}{u} = \frac{12x^2 + 6}{4x^3 + 6x}$$
+                </div>
+                <p>ويمكن أخذ 2 عامل مشترك للتبسيط الفني:</p>
+                <div class="math-block">
+                    $$f'(x) = \frac{2(6x^2 + 3)}{2(2x^3 + 3x)} = \frac{6x^2 + 3}{2x^3 + 3x}$$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION 4 -->
+    <div class="question-card">
+        <div class="question-header">
+            <div class="question-title">Question 4</div>
+            <div class="question-marks">10 Marks Total</div>
+        </div>
+
+        <!-- 4.a -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">a) Evaluate the following integrals using By Parts:</span>
+                <span class="sub-marks">(4 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $\int x^2 \sin x \, dx$ <br><br>
+                <strong>ii)</strong> $\int \tan^{-1} x \, dx$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i):</strong> تكامل حاصل ضرب دالتين بالتجزيء (Integration by Parts). بما إن الأولى دالة كثير حدود والثانية دالة مثلثية، الأسهل نستخدم <strong>طريقة الجدول (Tabular Method)</strong> السريعة:</p>
+                <table style="width: 100%; border-collapse: collapse; margin: 15px 0; text-align: center; direction: ltr;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--secondary-neon);">
+                            <th style="padding: 8px;">Sign</th>
+                            <th style="padding: 8px;">Differentiate (u)</th>
+                            <th style="padding: 8px;">Integrate (dv)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 8px;">+</td>
+                            <td style="padding: 8px;">$x^2$</td>
+                            <td style="padding: 8px;">$\sin x$</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;">-</td>
+                            <td style="padding: 8px;">$2x$</td>
+                            <td style="padding: 8px;">$-\cos x$</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;">+</td>
+                            <td style="padding: 8px;">$2$</td>
+                            <td style="padding: 8px;">$-\sin x$</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px;">-</td>
+                            <td style="padding: 8px;">$0$</td>
+                            <td style="padding: 8px;">$\cos x$</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>نضرب القطر المائل بالتناوب:</p>
+                <div class="math-block">
+                    $$\int x^2 \sin x \, dx = (x^2)(-\cos x) - (2x)(-\sin x) + (2)(\cos x) + C$$
+                </div>
+                <div class="math-block">
+                    $$\int x^2 \sin x \, dx = -x^2 \cos x + 2x \sin x + 2\cos x + C$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> تكامل $\int \tan^{-1} x \, dx$. بنفرض دايماً:</p>
+                <div class="math-block">
+                    $$u = \tan^{-1} x \implies du = \frac{1}{1+x^2} \, dx$$
+                    $$dv = dx \implies v = x$$
+                </div>
+                <p>نطبق قانون التجزيء $\int u \, dv = u \cdot v - \int v \, du$:</p>
+                <div class="math-block">
+                    $$\int \tan^{-1} x \, dx = x \cdot \tan^{-1} x - \int \frac{x}{1+x^2} \, dx$$
+                </div>
+                <p>التكامل الثاني البسط مشتقة المقام لو ضربنا فوق في 2 وقسمنا برة على 2:</p>
+                <div class="math-block">
+                    $$\int \frac{x}{1+x^2} \, dx = \frac{1}{2} \int \frac{2x}{1+x^2} \, dx = \frac{1}{2} \ln(1+x^2)$$
+                </div>
+                <p>إذن الحل النهائي هو:</p>
+                <div class="math-block">
+                    $$\int \tan^{-1} x \, dx = x \tan^{-1} x - \frac{1}{2} \ln(1+x^2) + C$$
+                </div>
+            </div>
+        </div>
+
+        <!-- 4.b -->
+        <div class="sub-question">
+            <div class="sub-header">
+                <span class="sub-label">b) Evaluate the following Integrals:</span>
+                <span class="sub-marks">(6 Marks)</span>
+            </div>
+            <div class="problem-statement">
+                <strong>i)</strong> $\int \frac{1}{x^2 \sqrt{4 - x^2}} \, dx$ (Using Trig Substitution) <br><br>
+                <strong>ii)</strong> $\int x \cdot e^{3x^2 + 1} \, dx$ <br><br>
+                <strong>iii)</strong> $\int \frac{x}{\sqrt{16 - x^2}} \, dx$
+            </div>
+            <button class="solution-toggle" onclick="toggleSolution(this)">💡 إظهار خطوات الحل النموذجية بالتفصيل</button>
+            <div class="solution-content">
+                <strong>الحل النموذجي خطوة بخطوة:</strong>
+                
+                <p><strong>حل الجزء الأول (i) - التعويض المثلثي (Trig Substitution):</strong><br>
+                الجذر على هيئة $\sqrt{a^2 - x^2}$ حيث $a=2$. نفرض التعويض المثلثي المناسب:</p>
+                <div class="math-block">
+                    $$x = 2\sin\theta \implies dx = 2\cos\theta \, d\theta$$
+                    $$\sqrt{4 - x^2} = \sqrt{4 - 4\sin^2\theta} = 2\cos\theta$$
+                </div>
+                <p>نعوض في التكامل:</p>
+                <div class="math-block">
+                    $$\int \frac{2\cos\theta \, d\theta}{(4\sin^2\theta)(2\cos\theta)} = \int \frac{1}{4\sin^2\theta} \, d\theta = \frac{1}{4} \int \csc^2\theta \, d\theta$$
+                </div>
+                <p>تكامل الـ $\csc^2\theta$ هو $-\cot\theta$:</p>
+                <div class="math-block">
+                    $$-\frac{1}{4} \cot\theta + C$$
+                </div>
+                <p>نرجع المتغيرات لـ $x$ من مثلث فيثاغورس حيث $\sin\theta = \frac{x}{2}$ (المقابل/الوتر). المجاور للجذر هو $\sqrt{4-x^2}$ إذن $\cot\theta = \frac{\sqrt{4-x^2}}{x}$:</p>
+                <div class="math-block">
+                    $$\text{Final Result} = -\frac{\sqrt{4-x^2}}{4x} + C$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثاني (ii):</strong> التكامل $\int x \cdot e^{3x^2 + 1} \, dx$.<br>
+                مشتقة الأس هي $6x$. عندنا برا القوس $x$، نضرب جوا في 6 وبرا في $\frac{1}{6}$:</p>
+                <div class="math-block">
+                    $$\frac{1}{6} \int (6x) \cdot e^{3x^2 + 1} \, dx$$
+                </div>
+                <p>بما إن تفاضل الأس موجود برة، الناتج هو الدالة الأسية نفسها مقسومة على المعامل:</p>
+                <div class="math-block">
+                    $$\frac{1}{6} e^{3x^2 + 1} + C$$
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.1); margin: 15px 0;">
+
+                <p><strong>حل الجزء الثالث (iii):</strong> التكامل $\int \frac{x}{\sqrt{16 - x^2}} \, dx$.<br>
+                البسط هو تقريباً مشتقة ما تحت الجذر التربيعي. نستخدم التعويض المباشر (U-Substitution):</p>
+                <div class="math-block">
+                    $$u = 16 - x^2 \implies du = -2x \, dx \implies x \, dx = -\frac{1}{2} \, du$$
+                </div>
+                <p>نعوض في التكامل:</p>
+                <div class="math-block">
+                    $$\int \frac{1}{\sqrt{u}} \left(-\frac{1}{2}\right) \, du = -\frac{1}{2} \int u^{-1/2} \, du = -\frac{1}{2} \left( 2u^{1/2} \right) + C = -\sqrt{u} + C$$
+                </div>
+                <p>نرجع قيمة $u$ الأصلية:</p>
+                <div class="math-block">
+                    $$-\sqrt{16 - x^2} + C$$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 10px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+            &lt; Eng. Zain /&gt;
+        </div>
+        <p style="font-size: 0.8rem; margin-top: 5px;">&copy; 2026 Academic Revision Tools - All Rights Reserved</p>
+    </footer>
+</div>
+
+<script>
+    function toggleSolution(button) {
+        const solution = button.nextElementSibling;
+        if (solution.style.display === "block") {
+            solution.style.display = "none";
+            button.innerText = "💡 إظهار خطوات الحل النموذجية بالتفصيل";
+        } else {
+            solution.style.display = "block";
+            button.innerText = "🔒 إخفاء خطوات الحل النموذجية";
+            // Trigger MathJax typeset to render the newly shown equations
+            if (window.MathJax) {
+                MathJax.typesetPromise([solution]);
+            }
+        }
+    }
+
+    function toggleAllSolutions() {
+        const buttons = document.querySelectorAll(".solution-toggle");
+        const isRevealing = buttons[0].innerText.includes("إظهار");
+
+        buttons.forEach(button => {
+            const solution = button.nextElementSibling;
+            if (isRevealing) {
+                solution.style.display = "block";
+                button.innerText = "🔒 إخفاء خطوات الحل النموذجية";
+            } else {
+                solution.style.display = "none";
+                button.innerText = "💡 إظهار خطوات الحل النموذجية بالتفصيل";
+            }
+        });
+
+        if (isRevealing && window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    }
+</script>
+
+</body>
+</html>

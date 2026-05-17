@@ -298,6 +298,38 @@
                 بما إن الدالة بتاخد 3 تطلع 7، إذن الدالة العكسية لو أديتها 7 هترجعك لـ 3 تاني!
             </div>
         </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">التركيب بالخطوات: احسب اللي جوة الأول وبعدين عوض بيه في الدالة اللي برة!</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: If \( f(x) = x + 2 \) and \( g(x) = 3x \), what is \( (f \circ g)(1) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">A) 5</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">B) 9</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) 7</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">D) 6</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                أول حاجة بنحسب اللي جوة القوس: \( g(1) = 3(1) = 3 \).<br>
+                بعد كده بناخد النتيجة ونعوض بيها في الدالة الخارجية \( f \): \( f(3) = 3 + 2 = 5 \).
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">الدالة ومعكوسها بيلغوا تأثير بعض زي الضرب والقسمة!</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: Which of the following identity properties is true for any invertible function \( f \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">A) \( f(f^{-1}(x)) = x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">B) \( f(f^{-1}(x)) = -x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) \( f(f^{-1}(x)) = \frac{1}{x} \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                الـ Inverse بيلغي تأثير الدالة الأصلية ويرجعلك القيمة الأصلية \( x \) زي ما كانت: \( f(f^{-1}(x)) = x \).
+            </div>
+        </div>
     </div>
 
     <!-- PART 5: DEEP PROBLEM SOLVING -->

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 9: Integration by Parts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 9<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Integration by Parts</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندرس طريقة <b>التكامل بالتجزئة (Integration by Parts)</b>، وهي الطريقة الأساسية لتكامل حاصل ضرب دالتين لما تكون طريقة التعويض مش نافعة.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Integration by Parts</td><td>التكامل بالتجزئة</td><td>تكامل حاصل ضرب دالتين باستخدام القانون الأساسي المستنتج من مشتقة حاصل الضرب.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">LIATE Rule</td><td>قاعدة تحديد الـ u</td><td>ترتيب أولويات اختيار الدالة $u$ المراد تفاضلها: لوغاريتمية، عكسية، جبرية، مثلثية، أسية.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Circular / Repeating Integral</td><td>التكامل الدائري المتكرر</td><td>تكامل بيتطلب التجزئة مرتين ليعود للدالة الأصلية، فنحله جبرياً كمعادلة.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Tabular (DI) Method</td><td>طريقة الجدول السريعة</td><td>طريقة سهلة وسريعة لحل التكامل بالتجزئة بدون تكرار القانون يدوياً.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: THE CORE FORMULA & LIATE RULE -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. القانون الأساسي وقاعدة الاختيار (Formula & LIATE Rule)</h2>
+        <p>يا هندسة، قانون التكامل بالتجزئة بيجي من قانون تفاضل ضرب دالتين، وبنكتبه على الصورة دي:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \int u \, dv = u \cdot v - \int v \, du \]
+        </div>
+
+        <p dir="rtl">💡 <b>إزاي بنختار الـ $u$ والـ $dv$؟</b><br>
+        بنختار الـ $u$ هي الدالة الأسهل في التفاضل (واللي بتنتهي بالتفاضل غالباً)، بينما الـ $dv$ هي الجزء المتبقي للتكامل. ولتسهيل الاختيار، بنمشي على كلمة <b>LIATE</b> بالترتيب من اليسار لليمين:</p>
+        
+        <ul style="list-style-type: none; padding-right: 0; margin-bottom: 20px; line-height: 2;">
+            <li>1️⃣ <b>L - Logarithmic:</b> الدوال اللوغاريتمية مثل $\ln x$ (أعلى أولوية للـ $u$).</li>
+            <li>2️⃣ <b>I - Inverse Trig:</b> الدوال المثلثية العكسية مثل $\tan^{-1} x$.</li>
+            <li>3️⃣ <b>A - Algebraic:</b> الدوال الجبرية وكثيرات الحدود مثل $x^2, x, 5$.</li>
+            <li>4️⃣ <b>T - Trigonometric:</b> الدوال المثلثية العادية مثل $\sin x, \cos x$.</li>
+            <li>5️⃣ <b>E - Exponential:</b> الدوال الأسية مثل $e^x$ (أقل أولوية للـ $u$، وبنختارها دايماً $dv$).</li>
+        </ul>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Classic Example 1: Evaluate \( \int x \cos x \, dx \):</strong> <br>
+            - We have Algebraic (\(x\)) and Trigonometric (\(\cos x\)). <br>
+            - By LIATE: \(u = x\) (Algebraic) and \(dv = \cos x \, dx\) (Trigonometric). <br><br>
+            - Differentiate \(u = x \implies du = dx\) <br>
+            - Integrate \(dv = \cos x \, dx \implies v = \sin x\) <br><br>
+            Apply the formula: <br>
+            \( \int u \, dv = u v - \int v \, du \) <br>
+            \( \int x \cos x \, dx = x \sin x - \int \sin x \, dx \) <br>
+            \( \int x \cos x \, dx = \textcolor{lime}{x \sin x + \cos x + C} \)
+        </div>
+    </div>
+
+    <!-- PART 2: THE TABULAR (DI) METHOD -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. طريقة الجدول السحرية (Tabular / DI Method)</h2>
+        <p>لما يكون عندك دالة جبرية (زي $x^3$) مضروبة في دالة أسية أو مثلثية، وبدال ما تعمل تكامل بالتجزئة 3 أو 4 مرات وتضيع وقت الامتحان، الجدول ده بيخلصها في ثواني:</p>
+        
+        <div dir="rtl">
+            <p>1. بنعمل عمود للتفاضل ($D$) يبدأ بالدالة الجبرية ونفضل نشتق لحد ما نوصل لـ 0.</p>
+            <p>2. بنعمل عمود للتكامل ($I$) يبدأ بالدالة التانية ونفضل نكاملها قصاد كل خطوة تفاضل.</p>
+            <p>3. بنحط إشارات متناوبة تبدأ بموجب (+, -, +, -).</p>
+            <p>4. بنضرب كل عنصر في العمود الأول مع المقابل له مائلاً في العمود التاني مع مراعاة الإشارة.</p>
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example using Tabular Method: Evaluate \( \int x^2 e^x \, dx \)</strong> <br><br>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sign</th>
+                        <th>D (Differentiate)</th>
+                        <th>I (Integrate)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>+</td>
+                        <td class="highlight-cyan">\(x^2\)</td>
+                        <td>\(e^x\)</td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td class="highlight-cyan">\(2x\)</td>
+                        <td>\(e^x\) (Integrating \(e^x\))</td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td class="highlight-cyan">\(2\)</td>
+                        <td>\(e^x\)</td>
+                    </tr>
+                    <tr>
+                        <td>-</td>
+                        <td class="highlight-cyan">\(0\)</td>
+                        <td>\(e^x\)</td>
+                    </tr>
+                </tbody>
+            </table>
+            Multiply diagonally: <br>
+            \( \int x^2 e^x \, dx = (+x^2)(e^x) + (-2x)(e^x) + (+2)(e^x) + C \) <br>
+            \( \int x^2 e^x \, dx = \textcolor{lime}{e^x(x^2 - 2x + 2) + C} \)
+        </div>
+    </div>
+
+    <!-- PART 3: DEFINITE INTEGRATION BY PARTS -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. التكامل بالتجزئة المحدد (Definite Parts)</h2>
+        <p>التكامل المحدد بالتجزئة بنطبق عليه نفس القانون بالظبط، بس بنعوض بحدود التكامل $[a, b]$ على الجزء المستخرج أولاً وجزء التكامل المتبقي:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \int_{a}^{b} u \, dv = \left[ u \cdot v \right]_{a}^{b} - \int_{a}^{b} v \, du \]
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Evaluate \( \int_{1}^{e} \ln x \, dx \):</strong> <br>
+            - Let \(u = \ln x \implies du = \frac{1}{x} dx\) <br>
+            - Let \(dv = dx \implies v = x\) <br><br>
+            Apply the limits: <br shadow="none">
+            \( \int_{1}^{e} \ln x \, dx = \left[ x \ln x \right]_{1}^{e} - \int_{1}^{e} x \cdot \frac{1}{x} \, dx \) <br>
+            \( \int_{1}^{e} \ln x \, dx = (e \ln e - 1 \ln 1) - \int_{1}^{e} 1 \, dx \) <br>
+            \( \int_{1}^{e} \ln x \, dx = (e - 0) - \left[ x \right]_{1}^{e} = e - (e - 1) = \textcolor{lime}{1} \)
+        </div>
+    </div>
+
+    <!-- PART 4: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 4. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">امشي على كلمة LIATE بالترتيب.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: When integrating \( \int x^2 \ln x \, dx \), which function should be chosen as \( u \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( x^2 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) \( \ln x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( dx \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                حسب قاعدة <b>LIATE</b>، الـ Logarithmic ($\ln x$) تسبق الـ Algebraic ($x^2$) في الأولوية، عشان كدة بنختار $u = \ln x$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">أشهر تكامل بالتجزئة، احفظه زي اسمك.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: What is the integral of \( \int \ln x \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( \frac{1}{x} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) \( x \ln x - x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) \( x \ln x + C \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                باستخدام التجزئة: $u = \ln x \implies du = \frac{1}{x} dx$ و $dv = dx \implies v = x$.<br>
+                النتيجة: $x \ln x - \int x \cdot \frac{1}{x} \, dx = x \ln x - x + C$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تكامل أسي جبري أساسي جداً.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: Evaluate the integral \( \int x e^x \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">A) \( x e^x - e^x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) \( x e^x + e^x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) \( \frac{1}{2} x^2 e^x + C \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                باستخدام التجزئة: $u = x \implies du = dx$ و $dv = e^x \, dx \implies v = e^x$.<br>
+                النتيجة: $x e^x - \int e^x \, dx = x e^x - e^x + C$.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تكامل جبري مع جيب التمام.</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: Find \( \int x \cos x \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( x \sin x - \cos x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( x \sin x + \cos x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( -x \sin x + \cos x + C \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                باستخدام التجزئة: $u = x \implies du = dx$ و $dv = \cos x \, dx \implies v = \sin x$.<br>
+                النتيجة: $x \sin x - \int \sin x \, dx = x \sin x - (-\cos x) + C = x \sin x + \cos x + C$.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تطبيق طريقة الجدول الذهبية.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: What is the result of \( \int x^2 e^x \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">A) \( e^x(x^2 + 2x + 2) + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">B) \( e^x(x^2 - 2x + 2) + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) \( e^x(x^2 - 2x - 2) + C \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                باستخدام طريقة الجدول اللي درسناها فوق:<br>
+                $\int x^2 e^x \, dx = x^2 e^x - 2x e^x + 2e^x + C = e^x(x^2 - 2x + 2) + C$.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 5: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 5. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">التكامل الدائري المتكرر الشهير.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Evaluate the repeating integral: <br>
+                \( I = \int e^x \sin x \, dx \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">التكامل ده بنسميه تكامل دائري أو متكرر (Circular Integral) لأنك مهما كاملت بالتجزئة مش هيخلص للصفر، الحل هنا إننا نكامل مرتين ونرجعه لصورته الأصلية عشان نحله كمعادلة:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Round 1 of Integration by Parts:} \\
+&\text{Let } u = \sin x \implies du = \cos x \, dx \\
+&\text{Let } dv = e^x \, dx \implies v = e^x \\
+&I = e^x \sin x - \int e^x \cos x \, dx \\[15pt]
+
+&\text{2. Round 2 of Integration by Parts on the new integral:} \\
+&\int e^x \cos x \, dx \\
+&\text{Let } u = \cos x \implies du = -\sin x \, dx \\
+&\text{Let } dv = e^x \, dx \implies v = e^x \\
+&\int e^x \cos x \, dx = e^x \cos x - \int e^x (-\sin x) \, dx \\
+&\int e^x \cos x \, dx = e^x \cos x + \int e^x \sin x \, dx \\[15pt]
+
+&\text{3. Substitute Round 2 back into the first equation:} \\
+&I = e^x \sin x - \left( e^x \cos x + \textcolor{cyan}{\int e^x \sin x \, dx} \right) \\
+&I = e^x \sin x - e^x \cos x - \textcolor{cyan}{I} \\[15pt]
+
+&\text{4. Move } I \text{ to the left side and solve for } I: \\
+&2I = e^x \sin x - e^x \cos x \\
+&\textcolor{lime}{I = \frac{e^x}{2} (\sin x - \cos x) + C}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">جمال الخطوات وترتيبها لا يوصف! شفت إزاي التفكير الرياضي بيحول المشكلة لمعادلة جبرية بسيطة.</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">استخدام طريقة الجدول السحرية لحل تكامل جبري عالي الأس.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Using the Tabular Method, evaluate: <br>
+                \( \int x^3 \cos x \, dx \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">لو حليت دي يدوي بالتكامل بالتجزئة 3 مرات هتملى صفحتين وتغلط في الإشارات! طريقة الجدول هي المنقذ هنا:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sign</th>
+                                <th>D (Differentiation)</th>
+                                <th>I (Integration)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>+</td>
+                                <td class="highlight-cyan">\(x^3\)</td>
+                                <td>\(\cos x\)</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="highlight-cyan">\(3x^2\)</td>
+                                <td>\(\sin x\)</td>
+                            </tr>
+                            <tr>
+                                <td>+</td>
+                                <td class="highlight-cyan">\(6x\)</td>
+                                <td>\(-\cos x\)</td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="highlight-cyan">\(6\)</td>
+                                <td>\(-\sin x\)</td>
+                            </tr>
+                            <tr>
+                                <td>+</td>
+                                <td class="highlight-cyan">\(0\)</td>
+                                <td>\(\cos x\)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br>
+                    <strong>Compile the terms diagonally:</strong> <br>
+                    \begin{align*}
+                    \int x^3 \cos x \, dx &= (+x^3)(\sin x) - (-3x^2)(-\cos x) + (+6x)(-\sin x) - (-6)(\cos x) + C \\
+                    &= x^3 \sin x + 3x^2 \cos x - 6x \sin x - 6 \cos x + C \\
+                    &= \textcolor{lime}{(x^3 - 6x)\sin x + (3x^2 - 6)\cos x + C}
+                    \end{align*}
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">طريقة الجدول خلت المسألة تتحل في دقيقة واحدة ومستحيل تغلط فيها! ممتازة جداً.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

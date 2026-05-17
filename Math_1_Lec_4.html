@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 4: Derivatives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 4<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Derivatives & Rules of Differentiation</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندرس التفاضل وقواعد الاشتقاق. دي الأدوات اللي بتخلينا نحسب معدل التغير والماس لأي دالة بلمسة واحدة!</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Derivative ($f'(x)$)</td><td>المشتقة الأولى</td><td>ميل مماس المنحنى أو معدل التغير اللحظي للدالة.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Slope of Tangent ($m$)</td><td>ميل المماس</td><td>قيمة المشتقة الأولى للدالة عند نقطة التماس ($\tan \theta$).</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Normal Line</td><td>المنظم / العمودي على المماس</td><td>الخط المستقيم العمودي على المماس عند نفس نقطة التماس.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Product Rule</td><td>قاعدة حاصل ضرب دالتين</td><td>تفاضل الأولى × الثانية + الأولى × تفاضل الثانية.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Quotient Rule</td><td>قاعدة قسمة دالتين</td><td>(تفاضل البسط × المقام - البسط × تفاضل المقام) على (المقام) تربيع.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Chain Rule</td><td>قاعدة السلسلة (تفاضل القوس)</td><td>تفاضل القوس كله × تفاضل ما بداخل القوس.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: THE DERIVATIVE DEFINITION -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. تعريف المشتقة الأولى (Definition of Derivative)</h2>
+        <p>بص يا هندسة، هندسياً المشتقة هي ميل المماس ($m = \tan \theta$) عند أي نقطة على المنحنى. رياضياً بنجيبها باستخدام الليميت لما المسافة $h$ تقرب جداً من الصفر:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h} \]
+        </div>
+
+        <h3>أمثلة الإثبات بالتعريف (Derivatives by Definition):</h3>
+        <p>عشان نثبت تفاضل دالة زي $f(x) = x^2$ بالتعريف، بنطبق القانون خطوة بخطوة:</p>
+        
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example 1: Find derivative of \( f(x) = x^2 \) by definition:</strong>
+            \begin{align*}
+            & 1. \text{ Write down expressions:} \\
+            & f(x+h) = (x+h)^2 = x^2 + 2xh + h^2 \\
+            & 2. \text{ Apply limit definition:} \\
+            & f'(x) = \lim_{h \to 0} \frac{(x^2 + 2xh + h^2) - x^2}{h} \\
+            & f'(x) = \lim_{h \to 0} \frac{2xh + h^2}{h} \\
+            & 3. \text{ Take } h \text{ as a common factor:} \\
+            & f'(x) = \lim_{h \to 0} \frac{h(2x + h)}{h} = \lim_{h \to 0} (2x + h) = \textcolor{lime}{2x}
+            \end{align*}
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example 2: Find derivative of \( f(x) = \sin x \) by definition:</strong>
+            \begin{align*}
+            & f(x+h) = \sin(x+h) = \sin x \cos h + \cos x \sin h \\
+            & f'(x) = \lim_{h \to 0} \frac{\sin x \cos h + \cos x \sin h - \sin x}{h} \\
+            & f'(x) = \lim_{h \to 0} \left[ \sin x \left(\frac{\cos h - 1}{h}\right) + \cos x \left(\frac{\sin h}{h}\right) \right] \\
+            & \text{Recall that } \lim_{h \to 0} \frac{\cos h - 1}{h} = 0 \text{ and } \lim_{h \to 0} \frac{\sin h}{h} = 1: \\
+            & f'(x) = \sin x \cdot (0) + \cos x \cdot (1) = \textcolor{lime}{\cos x}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 2: BASIC DIFFERENTIATION RULES -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. قواعد التفاضل الأساسية (Differentiation Rules)</h2>
+        <p>بدل ما نستخدم التعريف الطويل كل مرة، العلماء عملوا لنا قواعد ذهبية سريعة ومباشرة:</p>
+        
+        <ul style="list-style-type: none; padding-right: 0; margin-bottom: 20px;">
+            <li>🔸 <b>تفاضل الثابت بصفر:</b> $\frac{d}{dx}(c) = 0$</li>
+            <li>🔸 <b>تفاضل الـ $x$ بواحد:</b> $\frac{d}{dx}(x) = 1$</li>
+            <li>🔸 <b>قاعدة الباور (Power Rule):</b> بننزل الأس ونطرح منه واحد: $\frac{d}{dx}(x^n) = n x^{n-1}$</li>
+        </ul>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Quick Examples:</strong>
+            \begin{align*}
+            & \bullet \ \frac{d}{dx}(x^6) = \textcolor{lime}{6x^5} \\
+            & \bullet \ \frac{d}{dx}(x^{1000}) = \textcolor{lime}{1000x^{999}} \\
+            & \bullet \ \frac{d}{dx}(7x^4) = 7 \cdot 4x^3 = \textcolor{lime}{28x^3} \\
+            & \bullet \ \frac{d}{dx}\left(4x^3 + 5\sqrt{x} - x^6 + \frac{6}{x^8} + 16\right) \\
+            & = \frac{d}{dx}\left(4x^3 + 5x^{1/2} - x^6 + 6x^{-8} + 16\right) \\
+            & = 12x^2 + \frac{5}{2}x^{-1/2} - 6x^5 - 48x^{-9} + 0 \\
+            & = \textcolor{lime}{12x^2 + \frac{5}{2\sqrt{x}} - 6x^5 - \frac{48}{x^9}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 3: PRODUCT AND QUOTIENT RULES -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. قاعدتا الضرب والقسمة (Product & Quotient Rules)</h2>
+        
+        <h3>1. قاعدة الضرب (Product Rule)</h3>
+        <p dir="rtl">لما يكون عندك دالتين مضروبين في بعض: <b>(تفاضل الأولى × الثانية) + (الأولى × تفاضل الثانية)</b></p>
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx} [f(x) \cdot g(x)] = f'(x) \cdot g(x) + f(x) \cdot g'(x) \]
+        </div>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Find derivative of \( F(x) = (3x^2 - 5x + 4)(9x - 8) \):</strong>
+            \begin{align*}
+            F'(x) &= (3x^2 - 5x + 4)' \cdot (9x - 8) + (3x^2 - 5x + 4) \cdot (9x - 8)' \\
+            &= \textcolor{lime}{(6x - 5)(9x - 8) + (3x^2 - 5x + 4)(9)}
+            \end{align*}
+        </div>
+
+        <h3>2. قاعدة القسمة (Quotient Rule)</h3>
+        <p dir="rtl">لما يكون عندك كسر بسط ومقام: <b>(تفاضل البسط × المقام - البسط × تفاضل المقام) على (المقام تربيع)</b></p>
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx} \left[\frac{f(x)}{g(x)}\right] = \frac{f'(x)g(x) - f(x)g'(x)}{[g(x)]^2} \]
+        </div>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Find derivative of \( F(x) = \frac{3x^2 + 7}{5x - 9} \):</strong>
+            \begin{align*}
+            F'(x) &= \frac{(3x^2+7)'(5x-9) - (3x^2+7)(5x-9)'}{(5x-9)^2} \\
+            &= \textcolor{lime}{\frac{6x(5x - 9) - (3x^2 + 7)(5)}{(5x - 9)^2}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 4: CHAIN RULE AND ROOT SHORTCUT -->
+    <div class="glass-card neon-border-orange">
+        <h2>🛠️ 4. قاعدة القوس والقدرات الخاصة (Chain Rule & Roots)</h2>
+        
+        <h3>قاعدة القوس (Power Rule / Chain Rule)</h3>
+        <p dir="rtl">لو عندك دالة جوه قوس ومرفوعة لباور $n$: <b>بننزل الباور بره القوس، ونطرح من الباور واحد، ونضرب برا القوس في تفاضل ما بداخل القوس!</b></p>
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx} [f(x)]^n = n [f(x)]^{n-1} \cdot f'(x) \]
+        </div>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Find \( F'(x) \) if \( F(x) = (3x^4 + 5x^2)^6 \):</strong>
+            \begin{align*}
+            F'(x) &= 6 (3x^4 + 5x^2)^5 \cdot \frac{d}{dx}(3x^4 + 5x^2) \\
+            &= \textcolor{lime}{6(3x^4 + 5x^2)^5 (12x^3 + 10x)}
+            \end{align*}
+        </div>
+
+        <h3>قاعدة الجذر التربيعي السريعة (Square Root Shortcut)</h3>
+        <p dir="rtl">بدل ما تحول الجذر لباور نصف وتتعب نفسك، استخدم الاختصار الذهبي ده: <b>تفاضل ما تحت الجذر على ضعف الجذر!</b></p>
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx} [\sqrt{f(x)}] = \frac{f'(x)}{2\sqrt{f(x)}} \]
+        </div>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Find derivative of \( F(x) = \sqrt{x^3 + 2x^5} \):</strong>
+            \begin{align*}
+            F'(x) &= \textcolor{lime}{\frac{3x^2 + 10x^4}{2\sqrt{x^3 + 2x^5}}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 5: TANGENT & NORMAL LINES -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📈 5. معادلة المماس والمنظم (Tangent & Normal Lines)</h2>
+        <p>المشتقة الأولى عند نقطة التماس $(x_0, y_0)$ بتديك ميل المماس $m = f'(x_0)$. ومنه نقدر نجيب:</p>
+        
+        <table dir="rtl">
+            <thead>
+                <tr>
+                    <th>الخط المستقيم</th>
+                    <th>الميل بتاعه (Slope)</th>
+                    <th>معادلة الخط (Equation)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="highlight-cyan">المماس (Tangent Line)</td>
+                    <td dir="ltr">$m = f'(x_0)$</td>
+                    <td dir="ltr">$y - y_0 = m(x - x_0)$</td>
+                </tr>
+                <tr>
+                    <td class="highlight-magenta">المنظم / العمودي (Normal Line)</td>
+                    <td dir="ltr">$-\frac{1}{m}$</td>
+                    <td dir="ltr">$y - y_0 = -\frac{1}{m}(x - x_0)$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Find Tangent and Normal lines for \( y = x^2 \) at point \( (3, 9) \):</strong>
+            \begin{align*}
+            & 1. \text{ Find slope } m: \\
+            & f'(x) = 2x \implies m = f'(3) = 2(3) = 6 \\
+            & 2. \text{ Equation of Tangent line:} \\
+            & y - 9 = 6(x - 3) \implies y = 6x - 18 + 9 \implies \textcolor{lime}{y = 6x - 9} \\
+            & 3. \text{ Equation of Normal line:} \\
+            & y - 9 = -\frac{1}{6}(x - 3) \implies 6y - 54 = -x + 3 \implies \textcolor{lime}{6y + x = 57}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 6: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 6. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">التعريف الرياضي الأساسي للتفاضل.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: What is the formal limit definition of the derivative \( f'(x) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( \lim_{h \to 0} \frac{f(x+h) + f(x)}{h} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) \( \lim_{h \to 0} \frac{f(x+h) - f(x)}{h} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( \lim_{x \to 0} \frac{f(x+h) - f(x)}{x} \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                ده القانون الأساسي للمشتقة الأولى بالتعريف، وهو بيعبر عن التغير في المحور الصادي على التغير في السيني لما التغير السيني يؤول لصفر.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">دالتين مضروبين في بعض: الأولى $x^2$ والتانية $\sin x$.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: What is the derivative of \( f(x) = x^2 \sin x \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( 2x \cos x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) \( 2x \sin x + x^2 \cos x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) \( 2x \sin x - x^2 \cos x \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                قاعدة حاصل الضرب:<br>
+                تفاضل الأولى ($2x$) × الثانية ($\sin x$) + الأولى ($x^2$) × تفاضل الثانية ($\cos x$).<br>
+                إذن الناتج: $2x \sin x + x^2 \cos x$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">كسر! يبقى نستخدم قاعدة قسمة دالتين.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: What is the derivative of \( f(x) = \frac{x}{x + 1} \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">A) \( \frac{1}{(x + 1)^2} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) \( \frac{2x + 1}{(x + 1)^2} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) \( \frac{1}{x+1} \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                قاعدة القسمة:<br>
+                \[ \frac{(x)'(x+1) - (x)(x+1)'}{(x+1)^2} = \frac{1(x+1) - x(1)}{(x+1)^2} = \frac{x + 1 - x}{(x+1)^2} = \frac{1}{(x+1)^2} \]
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">دالة قوس مرفوعة لأس (تفاضل القوس في تفاضل ما بداخل القوس!).</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: Find the derivative of \( f(x) = (2x^3 - 5)^4 \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( 4(2x^3 - 5)^3 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( 24x^2(2x^3 - 5)^3 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( 6x^2(2x^3 - 5)^3 \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                نطبق قاعدة القوس (Chain Rule):<br>
+                1. ننزل الأس ($4$) ونطرح منه واحد: $4(2x^3 - 5)^3$.<br>
+                2. نضرب في تفاضل ما بداخل القوس: $\frac{d}{dx}(2x^3 - 5) = 6x^2$.<br>
+                إذن الناتج الكلي:<br>
+                \[ 4(2x^3 - 5)^3 \cdot 6x^2 = 24x^2(2x^3 - 5)^3 \]
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">ميل المماس هو المشتقة الأولى عند النقطة المعطاة.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: What is the slope of the tangent line to the curve \( y = 3x^2 + 2x \) at \( x = 1 \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">A) 5</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">B) 8</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) 6</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                1. نجيب المشتقة الأولى: $y' = 6x + 2$.<br>
+                2. نعوض بـ $x = 1$:<br>
+                \[ m = y'(1) = 6(1) + 2 = 8 \]
+                إذن ميل المماس بيساوي 8 بكل بساطة!
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 7: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 7. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">إيجاد معادلة المماس والعمودي معاً خطوة بخطوة.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Find the equations of both the **Tangent line** and the **Normal line** to the curve: <br>
+                \( y = x^2 + 3x - 2 \) at the point \( (1, 2) \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">المسألة دي من أساسيات امتحانات الميدتيرم والفاينل، هنمشي معاها كالتالي:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Verify the point } (x_0, y_0) = (1, 2): \\
+&\text{Substitute } x = 1 \text{ in curve: } y = 1^2 + 3(1) - 2 = 1 + 3 - 2 = 2. \quad \text{(Verified!)} \\[10pt]
+
+&\text{2. Find the general derivative (المشتقة الأولى):} \\
+&y' = \frac{d}{dx}(x^2 + 3x - 2) = 2x + 3 \\[10pt]
+
+&\text{3. Calculate slope of tangent } m \text{ at } x_0 = 1: \\
+&m = y'(1) = 2(1) + 3 = 5. \\[15pt]
+
+&\text{4. Find the Tangent Line Equation (معادلة المماس):} \\
+&y - y_0 = m(x - x_0) \\
+&y - 2 = 5(x - 1) \\
+&y - 2 = 5x - 5 \\
+&\textcolor{lime}{y = 5x - 3} \quad \text{(or } 5x - y = 3 \text{)} \\[15pt]
+
+&\text{5. Find the Normal Line Equation (معادلة العمودي):} \\
+&\text{Slope of normal } = -\frac{1}{m} = -\frac{1}{5} \\
+&y - y_0 = -\frac{1}{m}(x - x_0) \\
+&y - 2 = -\frac{1}{5}(x - 1) \\
+&5(y - 2) = -(x - 1) \\
+&5y - 10 = -x + 1 \\
+&\textcolor{lime}{x + 5y = 11}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">حاجة فخمة جداً! جبنا معادلة المماس ($y = 5x - 3$) والعمودي عليه ($x + 5y = 11$).</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">إيجاد التفاضل بالتعريف الرسمي ليميت (Limit Definition).</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Using the limit definition of derivative, find \( f'(x) \) for: <br>
+                \( f(x) = x^2 + 5 \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">لما الدكتور يقولك "by definition" أو "using limit definition"، أوعى تشتق بالقواعد العادية! لازم تكتب قانون الليميت:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Write the Limit Definition Formula:} \\
+&f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h} \\[15pt]
+
+&\text{2. Set up the terms:} \\
+&f(x) = x^2 + 5 \\
+&f(x+h) = (x+h)^2 + 5 = x^2 + 2xh + h^2 + 5 \\[15pt]
+
+&\text{3. Substitute terms into the formula:} \\
+&f'(x) = \lim_{h \to 0} \frac{(x^2 + 2xh + h^2 + 5) - (x^2 + 5)}{h} \\[15pt]
+
+&\text{4. Simplify the numerator (طير المتشابهات):} \\
+&\text{The } x^2 \text{ and } 5 \text{ will cancel out:} \\
+&f'(x) = \lim_{h \to 0} \frac{2xh + h^2}{h} \\[15pt]
+
+&\text{5. Factor out } h \text{ from numerator (خد عامل مشترك):} \\
+&f'(x) = \lim_{h \to 0} \frac{h(2x + h)}{h} \\[15pt]
+
+&\text{6. Cancel } h \text{ and evaluate the limit as } h \to 0: \\
+&f'(x) = \lim_{h \to 0} (2x + h) = 2x + 0 = \textcolor{lime}{2x}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">ممتاز! الإثبات طلع $2x$ وهو مطابق تماماً لقاعدة تفاضل $x^2+5$ بالقواعد العادية.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 8: Integration & Substitution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 8<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Integration & Substitution</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندخل في الجزء التاني من المنهج وهو <b>التكامل (Integration)</b>، العملية العكسية للتفاضل. هنتعلم القواعد الأساسية وطريقة التعويض العبقرية (U-Substitution).</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Antiderivative / Integral</td><td>المشتقة العكسية / التكامل</td><td>إرجاع الدالة لأصلها قبل التفاضل مع إضافة ثابت التكامل $C$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Indefinite Integral</td><td>التكامل غير المحدد</td><td>تكامل بدون حدود، والناتج دايماً بيكون دالة زائد الثابت $C$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Definite Integral</td><td>التكامل المحدد</td><td>تكامل له حدود $[a, b]$، وناتجه بيكون رقم يمثل المساحة تحت المنحنى.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Substitution Rule (U-Sub)</td><td>قاعدة التعويض</td><td>تبديل متغير معقد بـ $u$ لتسهيل التكامل ليكون على القواعد الأساسية.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: INDEFINITE INTEGRAL & BASIC RULES -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. التكامل غير المحدد والقواعد الأساسية (Basic Integration Rules)</h2>
+        <p>يا هندسة، التكامل غير المحدد $\int f(x) \, dx = F(x) + C$ هو عكس التفاضل بالملي. يعني لو اشتقيت $F(x) + C$ هيديك الدالة الأصلية جوة التكامل $f(x)$.</p>
+        
+        <h3>القواعد الأساسية الخمسة:</h3>
+        <ol style="padding-right: 20px; margin-bottom: 20px;">
+            <li style="margin-bottom: 10px;">
+                ⭐ <b>قاعدة القوة (Power Rule):</b> زود على الأس واحد واقسم على الأس الجديد.
+                $$\int x^N \, dx = \frac{x^{N+1}}{N+1} + C \quad (N \neq -1)$$
+                ولما الأس يكون $-1$ (يعني مقلوب الـ $x$):
+                $$\int \frac{1}{x} \, dx = \ln|x| + C$$
+            </li>
+            <li style="margin-bottom: 10px;">
+                ⭐ <b>دالة مضروبة في مشتقتها:</b> لو عندك قوس مرفوع لأس مضروب في مشتقة ما بداخل القوس، بنزود على أس القوس 1 ونقسم على الأس الجديد مباشرة ونحذف المشتقة!
+                $$\int [f(x)]^n \cdot f'(x) \, dx = \frac{[f(x)]^{n+1}}{n+1} + C \quad (n \neq -1)$$
+            </li>
+            <li style="margin-bottom: 10px;">
+                ⭐ <b>البسط هو مشتقة المقام:</b> لو البسط تفاضل المقام، التكامل بيساوي $\ln$ المقام فوراً!
+                $$\int \frac{f'(x)}{f(x)} \, dx = \ln|f(x)| + C$$
+            </li>
+            <li style="margin-bottom: 10px;">
+                ⭐ <b>التكامل للدالة الأسية:</b> تكامل الـ $e^{f(x)}$ المضروبة في مشتقة الأس بتاعها بيدينا نفس الدالة الأسية!
+                $$\int e^{f(x)} \cdot f'(x) \, dx = e^{f(x)} + C$$
+            </li>
+        </ol>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Examples:</strong>
+            \begin{align*}
+            & \bullet \ \int 12x^3(3x^4+2)^5 \, dx \implies \text{Inside derivative is } 12x^3 \implies \text{Result: } \textcolor{lime}{\frac{(3x^4+2)^6}{6} + C} \\
+            & \bullet \ \int \frac{\cos x}{\sin x} \, dx \implies \text{Numerator is derivative of denominator} \implies \text{Result: } \textcolor{lime}{\ln|\sin x| + C} \\
+            & \bullet \ \int \sec^2 x \cdot e^{\tan x} \, dx \implies \text{Sec}^2 x \text{ is derivative of exponent } \tan x \implies \text{Result: } \textcolor{lime}{e^{\tan x} + C}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 2: THE SUBSTITUTION RULE (U-SUB) -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. قاعدة التعويض (The Substitution Rule)</h2>
+        <p>لما تكون الدالة مكلكعة ومش ماشية على القوانين، بنفرض متغير جديد $u = g(x)$ وبنجيب تفاضله $du = g'(x) \, dx$ عشان نحول التكامل كله لدلالة $u$ البسيطة:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \int f(g(x)) \cdot g'(x) \, dx = \int f(u) \, du \]
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example of Substitution:</strong> <br>
+            Evaluate \( I = \int x \sqrt{1 - 4x^2} \, dx \) <br><br>
+            1. Let \( u = 1 - 4x^2 \implies du = -8x \, dx \implies x \, dx = -\frac{1}{8} du \) <br>
+            2. Substitute: <br>
+            \( I = \int \sqrt{u} \cdot \left(-\frac{1}{8}\right) du = -\frac{1}{8} \int u^{1/2} du \) <br>
+            3. Integrate: <br>
+            \( I = -\frac{1}{8} \cdot \frac{u^{3/2}}{3/2} + C = -\frac{1}{12} u^{3/2} + C \) <br>
+            4. Substitute back \( u = 1 - 4x^2 \): <br>
+            \( I = \textcolor{lime}{-\frac{1}{12} (1 - 4x^2)^{3/2} + C} \)
+        </div>
+    </div>
+
+    <!-- PART 3: THE DEFINITE INTEGRAL -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. التكامل المحدد (Definite Integral)</h2>
+        <p>النظرية الأساسية للتفاضل والتكامل بتقولنا لو عايز تحسب تكامل محدد من $a$ لـ $b$، هات المشتقة العكسية العادية $F(x)$ وعوض بالحد اللي فوق ناقص الحد اللي تحت:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \int_{a}^{b} f(x) \, dx = F(b) - F(a) \]
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example:</strong> <br>
+            Evaluate \( \int_{0}^{2} (x^2 - 2x) \, dx \) <br><br>
+            1. Find the antiderivative: \( F(x) = \frac{x^3}{3} - x^2 \) <br>
+            2. Apply FTC: <br>
+            \( F(2) - F(0) = \left( \frac{8}{3} - 4 \right) - (0 - 0) = \textcolor{lime}{-\frac{4}{3}} \)
+        </div>
+    </div>
+
+    <!-- PART 4: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 4. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">قاعدة القوة العكسية للـ x المرفوعة لأس سالب.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: Evaluate the integral \( \int \frac{1}{x^2} \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( \ln(x^2) + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) \( -\frac{1}{x} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( \frac{1}{x} + C \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                هنكتب التكامل على صورة $\int x^{-2} \, dx$. نجمع 1 على الأس فيكون $x^{-1}$ ونقسم على الأس الجديد وهو $-1$. النتيجة هي $-x^{-1} + C = -\frac{1}{x} + C$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">البسط هو تفاضل المقام بالظبط!</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: Find \( \int \frac{2x}{x^2 + 5} \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( \frac{x^2}{x^2+5} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) \( \ln(x^2 + 5) + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) \( 2\ln(x^2 + 5) + C \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                بما أن تفاضل المقام $x^2+5$ هو $2x$ وهو نفس المقدار الموجود في البسط بالظبط، إذن التكامل فوراً هو $\ln$ المقام. النتيجة: $\ln(x^2 + 5) + C$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">مضروبة في مشتقة الأس بتاعها.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: What is the integral of \( \int \sec^2 x \cdot e^{\tan x} \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">A) \( e^{\tan x} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) \( \tan x \cdot e^{\tan x} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) \( \sec x \cdot e^{\tan x} + C \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                بما أن $\sec^2 x$ هي مشتقة الأس $\tan x$ للدالة الأسية $e^{\tan x}$، فإن التكامل يدينا نفس الدالة الأسية مباشرة: $e^{\tan x} + C$.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">قوس مرفوع لأس ومضروب في مشتقة ما بداخله.</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: Find the integral of \( \int (x^2 + 1)^3 \cdot 2x \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( \frac{(x^2+1)^3}{3} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( \frac{(x^2+1)^4}{4} + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( (x^2+1)^4 + C \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                لدينا قوس مرفوع لأس 3، ومشتقة ما بداخل القوس هي $2x$ وهي متوفرة بالخارج. إذن نزود على أس القوس واحد ونقسم على الأس الجديد ونحذف المشتقة: $\frac{(x^2+1)^4}{4} + C$.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تكامل محدد وعوض فوق ناقص تحت.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: Evaluate the definite integral \( \int_{0}^{2} (3x^2 - 2x) \, dx \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">A) \( 8 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">B) \( 6 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">C) \( 4 \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: C.</span><br>
+                نجيب المشتقة العكسية أولاً: $F(x) = x^3 - x^2$.<br>
+                نعوض بـ 2: $F(2) = 2^3 - 2^2 = 8 - 4 = 4$.<br>
+                نعوض بـ 0: $F(0) = 0$.<br>
+                النتيجة: $4 - 0 = 4$.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 5: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 5. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">مسألة تعويض قوية وصعبة.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Evaluate the indefinite integral: <br>
+                \( \int x^5 \sqrt{1 + x^2} \, dx \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">المسألة دي من أفكار الامتحانات الشهيرة، بنحتاج فيها تعويض ذكي ونرجع نعوض بقيمة $x^2$ تاني جوة القوس:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Let } u = 1 + x^2 \implies x^2 = u - 1 \\
+&\text{   Differentiate: } du = 2x \, dx \implies x \, dx = \frac{1}{2} du \\[10pt]
+
+&\text{2. Split } x^5 \text{ to make use of the substitution:} \\
+&\int x^5 \sqrt{1+x^2} \, dx = \int (x^2)^2 \cdot \sqrt{1+x^2} \cdot (x \, dx) \\[10pt]
+
+&\text{3. Substitute all terms with } u: \\
+&= \int (u-1)^2 \cdot \sqrt{u} \cdot \left(\frac{1}{2} du\right) \\
+&= \frac{1}{2} \int (u^2 - 2u + 1) u^{1/2} \, du \\
+&= \frac{1}{2} \int (u^{5/2} - 2u^{3/2} + u^{1/2}) \, du \\[10pt]
+
+&\text{4. Integrate term by term:} \\
+&= \frac{1}{2} \left[ \frac{u^{7/2}}{7/2} - 2 \cdot \frac{u^{5/2}}{5/2} + \frac{u^{3/2}}{3/2} \right] + C \\
+&= \frac{1}{2} \left[ \frac{2}{7} u^{7/2} - \frac{4}{5} u^{5/2} + \frac{2}{3} u^{3/2} \right] + C \\
+&= \frac{1}{7} u^{7/2} - \frac{2}{5} u^{5/2} + \frac{1}{3} u^{3/2} + C \\[10pt]
+
+&\text{5. Substitute back } u = 1 + x^2: \\
+&\textcolor{lime}{= \frac{1}{7} (1 + x^2)^{7/2} - \frac{2}{5} (1 + x^2)^{5/2} + \frac{1}{3} (1 + x^2)^{3/2} + C}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">ترتيب وخطوات ممتازة تضمن الدرجة النهائية بالكامل يا بطل!</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">إثبات تكامل الـ sec x الشهير بالضرب في المرافق.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Prove that: <br>
+                \( \int \sec x \, dx = \ln|\sec x + \tan x| + C \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">الإثبات ده يعتبر خدعة رياضية جميلة جداً، بنضرب بسط ومقام في المقدار $(\sec x + \tan x)$ عشان نخلي البسط هو مشتقة المقام بالظبط:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Multiply the integrand by } \frac{\sec x + \tan x}{\sec x + \tan x}: \\
+&\int \sec x \, dx = \int \sec x \cdot \frac{\sec x + \tan x}{\sec x + \tan x} \, dx \\[10pt]
+
+&\text{2. Expand the numerator:} \\
+&= \int \frac{\sec^2 x + \sec x \tan x}{\sec x + \tan x} \, dx \\[10pt]
+
+&\text{3. Check the derivative of the denominator:} \\
+&\frac{d}{dx}[\sec x + \tan x] = \sec x \tan x + \sec^2 x \\[10pt]
+
+&\text{4. Since the numerator is exactly the derivative of the denominator:} \\
+&\int \frac{f'(x)}{f(x)} \, dx = \ln|f(x)| + C \\
+&\textcolor{lime}{= \ln|\sec x + \tan x| + C}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">عبقرية رياضية خالصة! أثبتنا القانون بخطوات منطقية غاية في الروعة والوضوح.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

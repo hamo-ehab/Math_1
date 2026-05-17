@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 10: Trigonometric Substitution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 10<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Trigonometric Substitution</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندرس طريقة <b>التعويض المثلثي (Trigonometric Substitution)</b>، وهي واحدة من أقوى الطرق للتخلص من الجذور الرياضية المعقدة في التكاملات وتحويلها لنسب مثلثية سهلة.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Trig Substitution</td><td>التعويض المثلثي</td><td>طريقة لحل تكاملات تحتوي على جذور تربيعية معينة بالتعويض بدوال مثلثية.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Reference Triangle</td><td>المثلث المرجعي</td><td>مثلث قائم الزاوية بنرسمه في آخر المسألة عشان نرجع المتغير $\theta$ لأصله $x$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Pythagorean Identity</td><td>متطابقة فيثاغورس</td><td>المتطابقات الأساسية للتخلص من الجذر مثل: $1 - \sin^2\theta = \cos^2\theta$ و $1 + \tan^2\theta = \sec^2\theta$.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: THE THREE STANDARD CASES -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. الحالات الثلاثة القياسية للتعويض (The Three Cases)</h2>
+        <p>يا هندسة، لما تلاقي جذر تربيعي في التكامل ومش عارف تحله بالتعويض العادي، بص على صورة الجذر واختار التعويض المناسب من الجدول ده فوراً:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>الصيغة (Expression)</th>
+                    <th>التعويض المناسب (Substitution)</th>
+                    <th>التفاضل (Differential)</th>
+                    <th>التبسيط المتوقع (Simplification)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td dir="ltr">$\sqrt{a^2 - x^2}$</td>
+                    <td dir="ltr" class="highlight-cyan">$x = a \sin \theta$</td>
+                    <td dir="ltr">$dx = a \cos \theta \, d\theta$</td>
+                    <td dir="ltr">$a \cos \theta$</td>
+                </tr>
+                <tr>
+                    <td dir="ltr">$\sqrt{a^2 + x^2}$</td>
+                    <td dir="ltr" class="highlight-magenta">$x = a \tan \theta$</td>
+                    <td dir="ltr">$dx = a \sec^2 \theta \, d\theta$</td>
+                    <td dir="ltr">$a \sec \theta$</td>
+                </tr>
+                <tr>
+                    <td dir="ltr">$\sqrt{x^2 - a^2}$</td>
+                    <td dir="ltr" class="highlight-lime">$x = a \sec \theta$</td>
+                    <td dir="ltr">$dx = a \sec \theta \tan \theta \, d\theta$</td>
+                    <td dir="ltr">$a \tan \theta$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p dir="rtl">📌 <b>نصيحة ذهبية:</b> بعد ما تخلص التكامل بدلالة $\theta$، ارسم مثلث قائم الزاوية حط عليه المقابل والمجاور والوتر بدلالة $x$ عشان ترجع الـ $\theta$ لأصلها بسهولة تامة.</p>
+    </div>
+
+    <!-- PART 2: STEP-BY-STEP STRATEGY -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. استراتيجية الحل بالتعويض المثلثي</h2>
+        <ol style="padding-right: 20px; margin-bottom: 20px; line-height: 2;">
+            <li>حدد قيمة الثابت $a$ من المقدار تحت الجذر.</li>
+            <li>اكتب التعويض المناسب وقيمة الـ $dx$ المقابلة.</li>
+            <li>عوض بـ $x$ و $dx$ في التكامل وبسط المقدار تحت الجذر باستخدام المتطابقة المناسبة.</li>
+            <li>حل التكامل بدلالة $\theta$ (غالباً هيطلع تكامل دوال مثلثية بسيط).</li>
+            <li>ارسم المثلث المرجعي وحول الناتج النهائي بدلالة $x$.</li>
+        </ol>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example: Differentiate and integrate \( I = \int \frac{1}{\sqrt{4 + x^2}} \, dx \):</strong> <br>
+            - This matches \( \sqrt{a^2 + x^2} \) with \( a = 2 \). <br>
+            - Let \( x = 2 \tan \theta \implies dx = 2 \sec^2 \theta \, d\theta \). <br>
+            - The square root: \( \sqrt{4 + x^2} = \sqrt{4 + 4\tan^2\theta} = 2 \sec \theta \). <br><br>
+            Substitute into the integral: <br>
+            \( I = \int \frac{2 \sec^2 \theta \, d\theta}{2 \sec \theta} = \int \sec \theta \, d\theta \) <br>
+            \( I = \ln|\sec \theta + \tan \theta| + C \) <br><br>
+            From the triangle where \( \tan \theta = \frac{x}{2} \) (Opposite \(x\), Adjacent 2): <br>
+            - Hypotenuse = \( \sqrt{4 + x^2} \) <br>
+            - \( \sec \theta = \frac{\text{Hypotenuse}}{\text{Adjacent}} = \frac{\sqrt{4+x^2}}{2} \) <br><br>
+            Substitute back: <br>
+            \( I = \textcolor{lime}{\ln\left| \frac{\sqrt{4+x^2}}{2} + \frac{x}{2} \right| + C} \)
+        </div>
+    </div>
+
+    <!-- PART 3: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 3. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">صيغة ثابت تربيع ناقص متغير تربيع.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: Which trigonometric substitution is best for evaluating \( \int \frac{1}{\sqrt{9 - x^2}} \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">A) \( x = 3 \sin \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">B) \( x = 3 \tan \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( x = 3 \sec \theta \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                بما أن صيغة الجذر هي $\sqrt{a^2 - x^2}$ حيث $a^2 = 9 \implies a = 3$، فإن التعويض المثلثي المناسب هو $x = a \sin \theta \implies x = 3 \sin \theta$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">ثابت تربيع زائد متغير تربيع.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: What is the optimal substitution for \( \int \frac{1}{x^2 + 16} \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( x = 4 \sin \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) \( x = 4 \tan \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) \( x = 4 \sec \theta \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                المقدار هنا هو $x^2 + a^2$ حيث $a^2 = 16 \implies a = 4$. التعويض المناسب للجمع هو الظل دايماً: $x = a \tan \theta \implies x = 4 \tan \theta$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">متغير تربيع ناقص ثابت تربيع.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: Which substitution is best for \( \int \frac{\sqrt{x^2 - 25}}{x} \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">A) \( x = 5 \sin \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) \( x = 5 \tan \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">C) \( x = 5 \sec \theta \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: C.</span><br>
+                صيغة الجذر $\sqrt{x^2 - a^2}$ حيث $a^2 = 25 \implies a = 5$. التعويض للمتغير ناقص الثابت هو القاطع دايماً: $x = a \sec \theta \implies x = 5 \sec \theta$.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تبسيط متطابقات فيثاغورس.</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: What does the expression \( \sqrt{a^2 - a^2\sin^2\theta} \) simplify to for \( a > 0 \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( a \tan \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( a \cos \theta \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( a \sec \theta \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                بأخذ $a^2$ كعامل مشترك:<br>
+                $\sqrt{a^2(1 - \sin^2\theta)} = a\sqrt{\cos^2\theta} = a\cos\theta$.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">المشتقة العكسية للدالة الكسرية الشهيرة.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: What is the result of \( \int \frac{1}{\sqrt{1 - x^2}} \, dx \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">A) \( \sin^{-1} x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">B) \( \tan^{-1} x + C \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) \( \sec^{-1} x + C \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                دي المشتقة العكسية للدالة $\sin^{-1} x$ مباشرة كما درسناها بالتفصيل في تفاضل الدوال المثلثية العكسية. النتيجة هي $\sin^{-1} x + C$.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 4: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 4. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تطبيق عملي كامل على تعويض الـ sine ورسم المثلث المرجعي.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Evaluate the indefinite integral: <br>
+                \( I = \int \frac{1}{x^2 \sqrt{16 - x^2}} \, dx \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">المسألة دي من أفكار الامتحانات الشهيرة، هنطبق تعويض الـ $\sin$ لتبسيط الجذر التربيعي:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Identify the substitution style:} \\
+&\text{This matches } \sqrt{a^2 - x^2} \text{ where } a = 4. \\
+&\text{Let } x = 4\sin\theta \implies dx = 4\cos\theta \, d\theta \\[10pt]
+
+&\text{2. Simplify the square root terms:} \\
+&\sqrt{16 - x^2} = \sqrt{16 - 16\sin^2\theta} = \sqrt{16(1 - \sin^2\theta)} = 4\cos\theta \\[10pt]
+
+&\text{3. Substitute all terms into the integral:} \\
+&I = \int \frac{4\cos\theta \, d\theta}{(4\sin\theta)^2 \cdot 4\cos\theta} \\
+&I = \int \frac{4\cos\theta \, d\theta}{16\sin^2\theta \cdot 4\cos\theta} = \frac{1}{16} \int \frac{1}{\sin^2\theta} \, d\theta \\
+&I = \frac{1}{16} \int \csc^2\theta \, d\theta = -\frac{1}{16} \cot\theta + C \\[10pt]
+
+&\text{4. Convert back to } x \text{ using the reference triangle:} \\
+&\text{Since } \sin\theta = \frac{x}{4} \implies \text{Opposite } = x, \text{ Hypotenuse } = 4. \\
+&\text{By Pythagorean Theorem: Adjacent } = \sqrt{16 - x^2}. \\
+&\text{Thus: } \cot\theta = \frac{\text{Adjacent}}{\text{Opposite}} = \frac{\sqrt{16 - x^2}}{x} \\[10pt]
+
+&\text{5. Final Answer:} \\
+&\textcolor{lime}{I = -\frac{\sqrt{16 - x^2}}{16x} + C}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">حاجة تفرح بجد! إثبات رياضي قمة في الجمال والترتيب ومستحيل تنقص عليه درجة واحدة.</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تطبيق عملي على تعويض الـ secant مع المتطابقات المثلثية.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Evaluate the indefinite integral: <br>
+                \( I = \int \frac{\sqrt{x^2 - 9}}{x} \, dx \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">صيغة الجذر هنا هي $\sqrt{x^2 - a^2}$ وبالتالي هنعوض بدالة الـ $\sec$ القاطعة للتخلص من هذا المأزق:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Identify the substitution style:} \\
+&\text{This matches } \sqrt{x^2 - a^2} \text{ where } a = 3. \\
+&\text{Let } x = 3\sec\theta \implies dx = 3\sec\theta\tan\theta \, d\theta \\[10pt]
+
+&\text{2. Simplify the square root terms:} \\
+&\sqrt{x^2 - 9} = \sqrt{9\sec^2\theta - 9} = \sqrt{9(\sec^2\theta - 1)} = 3\tan\theta \\[10pt]
+
+&\text{3. Substitute all terms into the integral:} \\
+&I = \int \frac{3\tan\theta}{3\sec\theta} \cdot (3\sec\theta\tan\theta \, d\theta) \\
+&I = 3 \int \tan^2\theta \, d\theta \\[10pt]
+
+&\text{4. Integrate using identity } \tan^2\theta = \sec^2\theta - 1: \\
+&I = 3 \int (\sec^2\theta - 1) \, d\theta \\
+&I = 3 (\tan\theta - \theta) + C \\[10pt]
+
+&\text{5. Convert back to } x \text{ using the reference triangle:} \\
+&\text{Since } \sec\theta = \frac{x}{3} \implies \theta = \sec^{-1}\left(\frac{x}{3}\right). \\
+&\text{From the triangle (Hypotenuse } x, \text{ Adjacent } 3 \implies \text{Opposite } = \sqrt{x^2 - 9}): \\
+&\tan\theta = \frac{\text{Opposite}}{\text{Adjacent}} = \frac{\sqrt{x^2 - 9}}{3} \\[10pt]
+
+&\text{6. Final Answer:} \\
+&I = 3 \left( \frac{\sqrt{x^2 - 9}}{3} - \sec^{-1}\left(\frac{x}{3}\right) \right) + C \\
+&\textcolor{lime}{I = \sqrt{x^2 - 9} - 3\sec^{-1}\left(\frac{x}{3}\right) + C}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">ممتاز جداً يا هندسة! حل مثالي ومنظم كالعادة ونفذت المطلوب بدقة متناهية.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

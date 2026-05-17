@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 6: Logarithmic & General Exponential Derivatives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 6<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Logarithmic & General Exponential Derivatives</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندرس تفاضل الدوال اللوغاريتمية الطبيعية ($\ln x$) والاشتقاق اللوغاريتمى (Logarithmic Differentiation) لحل المسائل المعقدة، وتفاضل الدوال الأسية العامة ($a^x$).</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Natural Logarithm ($\ln x$)</td><td>اللوغاريتم الطبيعي</td><td>اللوغاريتم ذو الأساس الطبيعي $e$. تفاضله دايماً مقلوب القوس $\frac{1}{x}$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Logarithmic Differentiation</td><td>الاشتقاق اللوغاريتمي</td><td>طريقة لحساب مشتقات الدوال شديدة التعقيد بأخذ $\ln$ للطرفين وتبسيطها أولاً.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">General Exponential Function</td><td>الدالة الأسية العامة</td><td>دالة على صورة $a^x$ حيث الأساس $a$ رقم موجب ثابت غير $e$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Cancellation Rule</td><td>قاعدة الإلغاء</td><td>الـ $\ln$ والـ $e$ بيلغوا بعض دايماً: $\ln(e^x) = x$ و $e^{\ln x} = x$.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: NATURAL LOGARITHMIC FUNCTIONS -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. تفاضل اللوغاريتم الطبيعي (Natural Logarithmic Functions)</h2>
+        <p>يا هندسة، تفاضل دالة الـ $\ln$ سهل جداً ومميز. تفاضل الـ $\ln$ هو **(تفاضل ما بداخل القوس) على (ما بداخل القوس نفسه)**:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx}[\ln x] = \frac{1}{x} \quad \text{and} \quad \frac{d}{dx}[\ln f(x)] = \frac{f'(x)}{f(x)} \]
+        </div>
+
+        <h3>خواص هامة جداً للتبسيط قبل التفاضل (Properties of Logarithms):</h3>
+        <p dir="rtl">قوانين اللوغاريتمات دي بتسهل عليك التفاضل 180 درجة، احفظهم واستخدمهم دايماً قبل ما تشتق:</p>
+        <ul style="list-style-type: none; padding-right: 0; margin-bottom: 20px;">
+            <li>🔸 <b>ضرب يتحول لجمع:</b> $\ln(x \cdot y) = \ln x + \ln y$</li>
+            <li>🔸 <b>قسمة تتحول لطرح:</b> $\ln\left(\frac{x}{y}\right) = \ln x - \ln y$</li>
+            <li>🔸 <b>الأس بينزل برة:</b> $\ln(x^a) = a \ln x$</li>
+        </ul>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Examples:</strong>
+            \begin{align*}
+            & \bullet \ y = \ln(x^5 + 3x^2) \implies y' = \textcolor{lime}{\frac{5x^4 + 6x}{x^5 + 3x^2}} \\
+            & \bullet \ y = \ln(\sin x) \implies y' = \frac{\cos x}{\sin x} = \textcolor{lime}{\cot x} \\
+            & \bullet \ y = \ln(\sin x^2) \implies y' = \frac{\cos x^2 \cdot 2x}{\sin x^2} = \textcolor{lime}{2x \cot x^2} \\
+            & \bullet \ y = \ln(e^{x^5 + 3x^2}) \implies \text{Use Cancellation Rule first: } y = x^5 + 3x^2 \implies y' = \textcolor{lime}{5x^4 + 6x}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 2: LOGARITHMIC DIFFERENTIATION -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. الاشتقاق اللوغاريتمي (Logarithmic Differentiation)</h2>
+        <p>لما يقابلك مسألة فيها ضرب وقسمة وأقواس كتير وجذور مع بعض، أو متغير مرفوع لأس متغير زي $x^x$.. التفاضل العادي بيكون جحيم! بنستخدم الطريقة دي عشان نحولها لمسألة تافهة:</p>
+        
+        <ol style="padding-right: 20px; margin-bottom: 20px;">
+            <li>بناخد $\ln$ للطرفين: $\ln y = \ln[\text{Expression}]$.</li>
+            <li>بنستخدم خواص اللوغاريتمات لتفكيك الكسر المعقد لجمع وطرح بسيط.</li>
+            <li>بنشتق الطرفين ضمنياً: $\frac{1}{y} \cdot y' = \text{[Derivative of simplified RHS]}$.</li>
+            <li>بنضرب الطرفين في $y$ عشان نخلي $y'$ لوحدها، ونرجع قيمة $y$ الأصلية.</li>
+        </ol>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Classic Example: Differentiate \( y = x^{\sin x} \):</strong>
+            \begin{align*}
+            & 1. \text{ Take } \ln \text{ of both sides:} \\
+            & \ln y = \ln(x^{\sin x}) = \sin x \ln x \\
+            & 2. \text{ Differentiate implicitly using Product Rule:} \\
+            & \frac{y'}{y} = (\sin x)' \ln x + \sin x (\ln x)' \\
+            & \frac{y'}{y} = \cos x \ln x + \frac{\sin x}{x} \\
+            & 3. \text{ Multiply by } y: \\
+            & y' = y \left( \cos x \ln x + \frac{\sin x}{x} \right) \\
+            & y' = \textcolor{lime}{x^{\sin x} \left( \cos x \ln x + \frac{\sin x}{x} \right)}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 3: GENERAL EXPONENTIAL FUNCTIONS -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. الدالة الأسية العامة (General Exponential Function)</h2>
+        <p>لما يكون عندك أساس رقم موجب $a \neq e$ مرفوع لأس $x$ زي $5^x$ أو $2^{\sin x}$، تفاضلها هو نفس الدالة الأسية، بس بنضرب في $\ln a$ تفاضل الأس:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \frac{d}{dx}[a^x] = a^x \ln a \quad \text{and} \quad \frac{d}{dx}[a^{g(x)}] = a^{g(x)} \ln a \cdot g'(x) \]
+        </div>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Examples:</strong>
+            \begin{align*}
+            & \bullet \ y = 3^x \implies y' = \textcolor{lime}{3^x \ln 3} \\
+            & \bullet \ y = 2^{\sin x} \implies y' = \textcolor{lime}{2^{\sin x} \ln 2 \cdot \cos x} \\
+            & \bullet \ y = 2^{x^2 + x} \implies y' = \textcolor{lime}{2^{x^2 + x} \ln 2 \cdot (2x + 1)}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 4: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 4. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تفاضل ما بداخل القوس على القوس نفسه.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: What is the derivative of \( f(x) = \ln(x^3 + 4) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( \frac{1}{x^3 + 4} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) \( \frac{3x^2}{x^3 + 4} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( \frac{3x^2}{x} \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                نشتق المقدار اللي جوة الـ $\ln$ وهو $3x^2$ ونقسمه على المقدار الأصلي $x^3+4$. الناتج: $\frac{3x^2}{x^3+4}$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">الـ ln بيلغي الـ e!</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: Differentiate \( y = \ln(e^{\sin x}) \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( e^{\sin x} \cos x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">B) \( \frac{\cos x}{e^{\sin x}} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">C) \( \cos x \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: C.</span><br>
+                قبل ما تشتق تبهدل نفسك، الـ $\ln$ والـ $e$ بيلغوا بعض تماماً بقاعدة الإلغاء. إذن $y = \sin x$. وتفاضل الـ $\sin x$ هو $\cos x$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">دالة أسية عامة أساسها ليس e.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: What is the derivative of \( y = 5^{x^2} \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">A) \( 2x \cdot 5^{x^2} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">B) \( 2x \cdot 5^{x^2} \ln 5 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) \( 5^{x^2} \ln 5 \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                تفاضل الدالة الأسية العامة $a^u$ هو $a^u \ln a \cdot u'$. هنا $a = 5$ والأس هو $x^2$ وتفاضله $2x$. إذن النتيجة: $2x \cdot 5^{x^2} \ln 5$.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">أشهر مسألة اشتقاق لوغاريتمي في تاريخ الكالكولس.</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: Using logarithmic differentiation, what is the derivative of \( y = x^x \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( x \cdot x^{x-1} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( x^x (1 + \ln x) \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( x^x \ln x \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                بأخذ اللوغاريتم للطرفين:<br>
+                $\ln y = x \ln x$<br>
+                بالاشتقاق الضمني:<br>
+                $\frac{y'}{y} = 1 \cdot \ln x + x \cdot \frac{1}{x} = \ln x + 1$<br>
+                بالضرب في $y$ (التي تساوي $x^x$):<br>
+                $y' = x^x (1 + \ln x)$.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">مشتقة دالة لوغاريتمية بداخلها دالة جيب.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: What is the derivative of \( y = \ln(\sin x) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">A) \( \cot x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">B) \( \tan x \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) \( \frac{1}{\sin x} \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                تفاضل الكوزين/السين.. تفاضل ما بداخل اللوغاريتم هو $\cos x$ على ما بداخله وهو $\sin x$. النتيجة $\frac{\cos x}{\sin x} = \cot x$.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 5: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 5. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تبسيط الدوال الضخمة بالـ ln قبل الاشتقاق.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Use logarithmic differentiation to find the derivative of: <br>
+                \( y = \frac{x^4 \sqrt{x^2+9}}{(2x+3)^3} \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">المسألة دي لو حلتها بقاعدة القسمة والضرب مع بعض هتضيع وقت الامتحان كله! الحل الذكي هنا هو أخذ $\ln$ للطرفين أولاً:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Take } \ln \text{ of both sides:} \\
+&\ln y = \ln\left[ \frac{x^4 \sqrt{x^2+9}}{(2x+3)^3} \right] \\[15pt]
+
+&\text{2. Apply Log properties (تفكيك الكسر لجمع وطرح وضبط الأسس):} \\
+&\ln y = \ln(x^4) + \ln(\sqrt{x^2+9}) - \ln((2x+3)^3) \\
+&\ln y = 4\ln x + \frac{1}{2}\ln(x^2+9) - 3\ln(2x+3) \\[15pt]
+
+&\text{3. Differentiate both sides with respect to } x \text{ (اشتق الطرفين بسهولة تامة):} \\
+&\frac{y'}{y} = 4 \cdot \frac{1}{x} + \frac{1}{2} \cdot \frac{2x}{x^2+9} - 3 \cdot \frac{2}{2x+3} \\
+&\frac{y'}{y} = \frac{4}{x} + \frac{x}{x^2+9} - \frac{6}{2x+3} \\[15pt]
+
+&\text{4. Multiply by } y \text{ and substitute its original value (رجع الـ } y \text{ لأصلها):} \\
+&y' = y \left[ \frac{4}{x} + \frac{x}{x^2+9} - \frac{6}{2x+3} \right] \\
+&\textcolor{lime}{y' = \frac{x^4 \sqrt{x^2+9}}{(2x+3)^3} \left[ \frac{4}{x} + \frac{x}{x^2+9} - \frac{6}{2x+3} \right]}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">حاجة تفتح النفس! حلينا أضخم مسألة في 4 خطوات بس بدون أي تعقيد.</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">متغير مرفوع لأس متغير.. لازم اشتقاق لوغاريتمي!</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Find the derivative of the function: <br>
+                \( y = x^{\cos x} \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">بما إن الأساس فيه $x$ والأس فيه $x$ (دالة أس دالة)، يبقى القانون العام لتفاضل القوس أو الأسية مش هينفعوا. لازم اشتقاق لوغاريتمي يا هندسة:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Take } \ln \text{ of both sides to bring down the exponent:} \\
+&\ln y = \ln(x^{\cos x}) \\
+&\ln y = \cos x \cdot \ln x \\[15pt]
+
+&\text{2. Differentiate implicitly using Product Rule on the right:} \\
+&\text{Let } u = \cos x \implies u' = -\sin x \\
+&\text{Let } v = \ln x \implies v' = \frac{1}{x} \\
+&\frac{y'}{y} = u'v + uv' = (-\sin x)(\ln x) + (\cos x)\left(\frac{1}{x}\right) \\
+&\frac{y'}{y} = -\sin x \ln x + \frac{\cos x}{x} \\[15pt]
+
+&\text{3. Multiply by } y \text{ and substitute } y = x^{\cos x}: \\
+&y' = y \left[ \frac{\cos x}{x} - \sin x \ln x \right] \\
+&\textcolor{lime}{y' = x^{\cos x} \left[ \frac{\cos x}{x} - \sin x \ln x \right]}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">ممتاز جداً! الخطوات واضحة ومرتبة كالعادة ونفذت المطلوب بدقة عالية.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

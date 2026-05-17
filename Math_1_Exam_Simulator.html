@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math 1 - Final Exam Simulator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Math 1 - Final Exam Simulator (100 Questions)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     
     <script>
         window.MathJax = {
@@ -24,10 +24,13 @@
             --neon-cyan: #00f3ff;
             --neon-magenta: #ff00ea;
             --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
             --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
             --glass-bg: rgba(20, 20, 35, 0.4);
             --glass-border: rgba(255, 255, 255, 0.1);
             --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +38,8 @@
         body {
             background-color: var(--bg-dark);
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.05) 0%, transparent 60%);
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
             background-attachment: fixed;
             color: var(--text-main);
             font-family: 'Cairo', 'Poppins', sans-serif;
@@ -48,26 +52,36 @@
 
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
         }
 
-        /* Top Bar */
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 30px;
+        }
+
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             padding: 15px 30px;
             border-radius: 15px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
 
         .counter {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--neon-cyan);
             text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
@@ -75,62 +89,88 @@
 
         .score-display {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: bold;
             color: var(--neon-lime);
+            text-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
         }
 
-        /* Question Box */
+        .progress-container {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            box-shadow: 0 0 10px var(--neon-cyan);
+            transition: width 0.3s ease;
+        }
+
         .question-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--neon-magenta);
             box-shadow: 0 0 30px rgba(255, 0, 234, 0.1);
             border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            display: none; /* hidden until JS loads it */
+            padding: 35px;
             animation: fadeIn 0.4s ease;
         }
 
-        .question-card.active {
-            display: block;
+        .category-badge {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
         }
 
         .question-text {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            margin-bottom: 30px;
+            font-size: 1.4rem;
+            margin-bottom: 25px;
             direction: ltr;
+            text-align: left;
+            line-height: 1.6;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 15px;
+            gap: 12px;
         }
 
         .option-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-main);
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
             cursor: pointer;
             font-family: 'Poppins', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             text-align: left;
             direction: ltr;
-            transition: all 0.3s;
+            transition: all 0.25s;
         }
 
         .option-btn:hover:not(:disabled) {
-            background: rgba(0, 243, 255, 0.1);
+            background: rgba(0, 243, 255, 0.08);
             border-color: var(--neon-cyan);
             transform: translateX(-5px);
         }
 
-        .option-btn.correct { background: rgba(57, 255, 20, 0.15); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .option-btn.correct { background: rgba(57, 255, 20, 0.15); border-color: var(--neon-lime); color: var(--neon-lime); text-shadow: 0 0 5px var(--neon-lime); }
         .option-btn.wrong { background: rgba(255, 42, 42, 0.15); border-color: var(--neon-red); color: var(--neon-red); }
         .option-btn:disabled { cursor: not-allowed; }
 
@@ -141,30 +181,30 @@
             display: none;
             text-align: right;
             animation: fadeIn 0.4s ease;
+            line-height: 1.8;
         }
 
         .next-btn {
-            background: var(--neon-cyan);
-            color: #000;
+            background: linear-gradient(45deg, var(--neon-cyan), var(--neon-purple));
+            color: #fff;
             border: none;
             padding: 15px 40px;
             font-family: 'Cairo', sans-serif;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             border-radius: 30px;
             margin-top: 25px;
             cursor: pointer;
             display: none;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
             transition: 0.3s;
         }
 
         .next-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
         }
 
-        /* Results Screen */
         .results-card {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
@@ -174,30 +214,33 @@
             padding: 50px;
             text-align: center;
             display: none;
+            animation: fadeIn 0.5s ease;
         }
 
         .results-card h1 {
             font-size: 3rem;
             color: var(--neon-lime);
             margin-bottom: 20px;
+            text-shadow: 0 0 15px var(--neon-lime);
         }
 
         .action-btn {
             background: transparent;
             color: var(--neon-cyan);
             border: 2px solid var(--neon-cyan);
-            padding: 10px 30px;
-            border-radius: 20px;
+            padding: 12px 35px;
+            border-radius: 25px;
             text-decoration: none;
             font-family: 'Cairo', sans-serif;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: 0.3s;
             display: inline-block;
             margin-top: 20px;
+            cursor: pointer;
         }
 
-        .action-btn:hover { background: var(--neon-cyan); color: #000; }
+        .action-btn:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 15px var(--neon-cyan); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -206,115 +249,1287 @@
 
 <div class="container">
     
-    <div style="text-align: right; margin-bottom: 10px;">
-        <a href="index.html" class="action-btn" style="font-size: 1rem; padding: 5px 15px; margin-top:0;">الرجوع للرئيسية</a>
+    <div style="text-align: right; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <a href="index.html" class="action-btn" style="font-size: 0.95rem; padding: 6px 18px; margin-top:0;">🏠 القائمة الرئيسية</a>
+        <h2 style="font-size: 1.2rem; color: var(--text-muted);">Math 1 Final Exam</h2>
     </div>
+
+    <h1>🚀 Final Exam Simulator</h1>
+    <p style="text-align: center; color: var(--text-muted); margin-bottom: 35px;">اختبار شامل وعميق مكون من 100 سؤال (10 أسئلة لكل محاضرة) مع شرح تفصيلي بالعامية المصرية لكل سؤال.</p>
 
     <!-- Top Status Bar -->
     <div class="top-bar" id="topBar">
-        <div class="score-display">Score: <span id="scoreVal">0</span></div>
-        <div class="counter">Q: <span id="qCount">1</span> / 100</div>
+        <div class="score-display">الدرجة: <span id="scoreVal">0</span> / 100</div>
+        <div class="counter">سؤال: <span id="qCount">1</span> / 100</div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container" id="progContainer">
+        <div class="progress-bar" id="pBar"></div>
     </div>
 
     <!-- Question Container -->
     <div id="quiz-container">
-        <!-- JS will inject questions here -->
+        <!-- Questions injected here dynamically -->
     </div>
 
     <!-- Results Container -->
     <div class="results-card" id="results-container">
-        <h1>الامتحان خلص! 🎉</h1>
-        <p style="font-size: 1.5rem; margin-bottom: 30px;">نتيجتك: <span id="finalScore" style="color: var(--neon-cyan); font-weight: bold; font-size: 2rem;"></span> / 100</p>
-        <button class="action-btn" onclick="location.reload()">إعادة الامتحان</button>
+        <h1>الامتحان انتهى بنجاح! 🎉</h1>
+        <p style="font-size: 1.6rem; margin-bottom: 15px;">درجتك النهائية هي:</p>
+        <div style="font-size: 4rem; font-weight: 900; color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,243,255,0.5); margin-bottom: 25px;">
+            <span id="finalScore"></span> / 100
+        </div>
+        <p id="performance-comment" style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 30px; line-height: 1.8; padding: 0 20px;"></p>
+        <button class="action-btn" onclick="location.reload()" style="font-size: 1.2rem; padding: 12px 40px;">🔄 أعد الاختبار من جديد</button>
     </div>
 
 </div>
 
 <script>
-    // Placeholder array. The user will provide 100 questions later. 
-    // This framework supports an infinite number of questions and automatically adjusts.
     const questions = [
+        // ==================== LECTURE 1: Functions, Domain & Range (Q1 - Q10) ====================
         {
-            text: "What is the domain of \\( f(x) = \\frac{1}{x-2} \\)?",
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Find the domain of \\( f(x) = \\frac{1}{x-3} \\).",
             options: [
                 "\\( \\mathbb{R} \\)",
-                "\\( \\mathbb{R} - \\{-2\\} \\)",
-                "\\( \\mathbb{R} - \\{2\\} \\)",
-                "\\( [2, \\infty) \\)"
-            ],
-            correct: 2, // index of correct option
-            explanation: "لأن المقام مينفعش يساوي صفر، يعني \\( x - 2 \\neq 0 \\) وبالتالي \\( x \\neq 2 \\). المسموح بيه هو كل الأرقام ما عدا 2."
-        },
-        {
-            text: "Determine if \\( f(x) = x^2 \\) is Even or Odd.",
-            options: [
-                "Even",
-                "Odd",
-                "Neither"
-            ],
-            correct: 0,
-            explanation: "لو عوضنا بـ \\(-x\\) مكان \\(x\\)، الباور الزوجي هيطير السالب \\( f(-x) = (-x)^2 = x^2 = f(x) \\)."
-        },
-        {
-            text: "If \\( f(x) = 2x + 3 \\) and \\( g(x) = x - 1 \\), what is \\( (f \\circ g)(x) \\)?",
-            options: [
-                "\\( 2x + 2 \\)",
-                "\\( 2x + 1 \\)",
-                "\\( 2x - 1 \\)",
-                "\\( 3x + 2 \\)"
-            ],
-            correct: 1,
-            explanation: "هنشيل كل x في f ونحط مكانها الدالة g كلها: \\( 2(x - 1) + 3 = 2x - 2 + 3 = 2x + 1 \\)."
-        },
-        {
-            text: "What is \\( \\lim_{x \\to 1} \\frac{x^2 - 1}{x - 1} \\)?",
-            options: [
-                "0",
-                "1",
-                "2",
-                "Does Not Exist"
+                "\\( \\mathbb{R} - \\{-3\\} \\)",
+                "\\( \\mathbb{R} - \\{3\\} \\)",
+                "\\( (3, \\infty) \\)"
             ],
             correct: 2,
-            explanation: "بالتعويض المباشر هتطلع \\( 0/0 \\). هنحلل البسط \\( (x-1)(x+1) \\) ونطير \\( (x-1) \\). هيتبقى \\( x+1 \\)، نعوض تطلع 2."
+            explanation: "بما إن الدالة كسرية، المقام مينفعش يساوي صفر أبداً عشان القسمة على صفر غير معرفة! يعني: \\( x - 3 \\neq 0 \\implies x \\neq 3 \\). يبقى المجال هو كل الأعداد الحقيقية ما عدا الـ 3."
         },
         {
-            text: "If \\( \\lim_{x \\to a^-} f(x) = 3 \\) and \\( \\lim_{x \\to a^+} f(x) = 1 \\), then \\( \\lim_{x \\to a} f(x) \\) is:",
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Find the domain of \\( g(x) = \\sqrt{x - 5} \\).",
             options: [
-                "3",
-                "1",
+                "\\( \\mathbb{R} \\)",
+                "\\( [5, \\infty) \\)",
+                "\\( (5, \\infty) \\)",
+                "\\( (-\\infty, 5] \\)"
+            ],
+            correct: 1,
+            explanation: "بما إن عندنا جذر زوجي (تربيعي)، يبقى لازم اللي تحت الجذر يكون أكبر من أو يساوي الصفر عشان ميكونش فيه أعداد تخيلية: \\( x - 5 \\ge 0 \\implies x \\ge 5 \\). يعني الفترة المغلقة من 5 لما لا نهاية."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Determine the symmetry of \\( f(x) = x^3 + x \\).",
+            options: [
+                "Even (زوجية)",
+                "Odd (فردية)",
+                "Neither (ليست زوجية وليست فردية)",
+                "Symmetric about the x-axis"
+            ],
+            correct: 1,
+            explanation: "لو عوضنا بـ \\(-x\\) مكان كل \\(x\\): \\( f(-x) = (-x)^3 + (-x) = -x^3 - x = -(x^3 + x) = -f(x) \\). طالما الإشارة السالبة طلعت برة الدالة كلها، يبقى الدالة فردية (Odd) ومتماثلة حول نقطة الأصل."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Find the range of \\( f(x) = x^2 + 4 \\).",
+            options: [
+                "\\( \\mathbb{R} \\)",
+                "\\( [0, \\infty) \\)",
+                "\\( [4, \\infty) \\)",
+                "\\( (4, \\infty) \\)"
+            ],
+            correct: 2,
+            explanation: "الـ \\( x^2 \\) دايماً قيمتها أكبر من أو تساوي الصفر لأي عدد حقيقي. فلما نجمع عليها 4، أقل قيمة ممكنة هتكون \\( 0 + 4 = 4 \\)، وبالتالي المدى (Range) هيكون من 4 مغلق إلى ما لا نهاية."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "If \\( f(x) = 3x - 2 \\), find its inverse function \\( f^{-1}(x) \\).",
+            options: [
+                "\\( f^{-1}(x) = \\frac{x-2}{3} \\)",
+                "\\( f^{-1}(x) = \\frac{x+2}{3} \\)",
+                "\\( f^{-1}(x) = 2x - 3 \\)",
+                "\\( f^{-1}(x) = 3x + 2 \\)"
+            ],
+            correct: 1,
+            explanation: "عشان نجيب المعكوس: هنخلي الدالة \\( y = 3x - 2 \\)، بعدين نبدل الرموز فتبقى \\( x = 3y - 2 \\). ونحل المعادلة عشان نجيب \\(y\\) لوحدها: \\( x + 2 = 3y \\implies y = \\frac{x+2}{3} \\). ده هو المعكوس!"
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "If \\( f(x) = x^2 \\) and \\( g(x) = 2x + 1 \\), find \\( (f \\circ g)(x) \\).",
+            options: [
+                "\\( 2x^2 + 1 \\)",
+                "\\( 4x^2 + 1 \\)",
+                "\\( 4x^2 + 4x + 1 \\)",
+                "\\( 2x^2 + 2x + 1 \\)"
+            ],
+            correct: 2,
+            explanation: "تركيب الدوال يعني هنشيل كل \\(x\\) في الدالة الخارجية \\(f\\) ونحط مكانها الدالة الداخلية \\(g(x)\\) كاملة: \\( (f \\circ g)(x) = f(g(x)) = (2x + 1)^2 = 4x^2 + 4x + 1 \\)."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Find the domain of \\( f(x) = \\frac{1}{\\sqrt{x-2}} \\).",
+            options: [
+                "\\( [2, \\infty) \\)",
+                "\\( (2, \\infty) \\)",
+                "\\( \\mathbb{R} - \\{2\\} \\)",
+                "\\( (-\\infty, 2) \\)"
+            ],
+            correct: 1,
+            explanation: "هنا عندنا جذر في المقام، يعني لازم نجمع بين شرطين: المقام ميبقاش صفر، واللي تحت الجذر ميبقاش سالب. يعني لازم \\( x-2 > 0 \\implies x > 2 \\)، عشان كده الفترة مفتوحة عند الـ 2."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Find the domain of the logarithmic function \\( f(x) = \\ln(x-1) \\).",
+            options: [
+                "\\( \\mathbb{R} \\)",
+                "\\( [1, \\infty) \\)",
+                "\\( (1, \\infty) \\)",
+                "\\( \\mathbb{R} - \\{1\\} \\)"
+            ],
+            correct: 2,
+            explanation: "الدالة اللوغاريتمية الطبيعية \\( \\ln(u) \\) معرفة فقط للأعداد الموجبة تماماً (أكبر من الصفر). يعني لازم \\( x - 1 > 0 \\implies x > 1 \\). المجال هو الفترة المفتوحة \\( (1, \\infty) \\)."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Determine the symmetry of \\( f(x) = \\cos(x) \\).",
+            options: [
+                "Even (متماثلة حول محور الصادات)",
+                "Odd (متماثلة حول نقطة الأصل)",
+                "Neither (غير متماثلة)",
+                "Symmetric about the x-axis"
+            ],
+            correct: 0,
+            explanation: "دالة الكوزين مشهورة بإنها بـ 'تأكل' السالب: \\( \\cos(-x) = \\cos(x) \\). ده معناه إن \\( f(-x) = f(x) \\)، وبالتالي الدالة زوجية (Even) ومتماثلة تماماً حول محور الصادات (y-axis)."
+        },
+        {
+            category: "Lecture 1: Functions, Domain & Range",
+            text: "Which of the following functions is one-to-one (injective) on its entire domain?",
+            options: [
+                "\\( f(x) = x^2 \\)",
+                "\\( f(x) = |x| \\)",
+                "\\( f(x) = x^3 \\)",
+                "\\( f(x) = \\cos(x) \\)"
+            ],
+            correct: 2,
+            explanation: "الدالة أحادية (One-to-One) هي الدالة اللي لو رسمت خط أفقي يقطعها في نقطة واحدة بس. الـ \\( x^3 \\) دايماً بتزيد ومفيش قيمتين لـ x بيدوا نفس الـ y، عكس التربيع والقيمة المطلقة والكوزين."
+        },
+
+        // ==================== LECTURE 2: Limits & Continuity (Q11 - Q20) ====================
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} \\).",
+            options: [
+                "0",
+                "2",
                 "4",
                 "Does Not Exist"
             ],
-            correct: 3,
-            explanation: "عشان النهاية تبقى موجودة لازم اليمين يساوي الشمال، وهنا هما مختلفين."
+            correct: 2,
+            explanation: "بالتعويض المباشر بتطلع \\( 0/0 \\) (كمية غير معينة). نحلل البسط كفرق بين مربعين: \\( \\frac{(x-2)(x+2)}{x-2} \\). نطير العامل الصفرى \\( (x-2) \\)، يتبقى \\( x + 2 \\). بالتعويض عن x بـ 2 تطلع النتيجة 4."
         },
         {
-            text: "Evaluate \\( \\lim_{x \\to \\infty} \\frac{3x^2 - x}{5x^2 + 1} \\).",
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to 0} \\frac{\\sin(3x)}{2x} \\).",
             options: [
                 "0",
-                "\\( \\frac{3}{5} \\)",
+                "\\( \\frac{3}{2} \\)",
+                "\\( \\frac{2}{3} \\)",
+                "1"
+            ],
+            correct: 1,
+            explanation: "دي متطابقة ونظرية شهيرة جداً في نهايات الدوال المثلثية: \\( \\lim_{x \\to 0} \\frac{\\sin(ax)}{bx} = \\frac{a}{b} \\). مباشرة وبدون لف ودوران تطلع النتيجة \\( 3/2 \\)."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to \\infty} \\frac{2x^3 - 5}{3x^3 + x^2} \\).",
+            options: [
+                "0",
+                "\\( \\frac{2}{3} \\)",
                 "\\( \\infty \\)",
                 "Does Not Exist"
             ],
             correct: 1,
-            explanation: "أكبر باور فوق هو تربيع وأكبر باور تحت هو تربيع، يبقى ناخد معامل اللي فوق على معامل اللي تحت \\( 3/5 \\)."
+            explanation: "عندما تؤول x إلى ما لا نهاية ودالة كسرية، بنبص على أكبر أس في البسط والمقام. بما إن الأسس متساوية (تربيعي/تكعيبي)، بناخد معامل أكبر أس في البسط على معامل أكبر أس في المقام، فتطلع النتيجة \\( 2/3 \\)."
         },
-        // We can add the rest of the 100 questions here later!
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "For \\( f(x) = \\begin{cases} x^2 & x < 2 \\\\ 2x & x \\ge 2 \\end{cases} \\), find \\( \\lim_{x \\to 2} f(x) \\).",
+            options: [
+                "4",
+                "2",
+                "0",
+                "Does Not Exist"
+            ],
+            correct: 0,
+            explanation: "بما إنها دالة معرفة بأكثر من قاعدة عند الـ 2، لازم نجيب النهاية اليمنى واليسرى. النهاية اليسرى (من الشمال): \\( \\lim_{x \\to 2^-} x^2 = 4 \\). النهاية اليمنى (من اليمين): \\( \\lim_{x \\to 2^+} 2x = 4 \\). بما إن النهايتين متساويتين وتساوي 4، إذن النهاية موجودة وتساوي 4."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to \\infty} \\frac{5x + 2}{x^2 + 1} \\).",
+            options: [
+                "5",
+                "0",
+                "\\( \\infty \\)",
+                "Does Not Exist"
+            ],
+            correct: 1,
+            explanation: "هنا درجة المقام (تربيعي) أكبر من درجة البسط (خطي) عند المالا نهاية، وده معناه إن المقام بيكبر بسرعة رهيبة جداً مقارنة بالبسط، فتؤول قيمة الكسر بالكامل إلى الصفر."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Find the value of \\( k \\) that makes \\( f(x) = \\begin{cases} kx + 1 & x \\le 3 \\\\ x^2 - 2 & x > 3 \\end{cases} \\) continuous everywhere.",
+            options: [
+                "k = 1",
+                "k = 2",
+                "k = 3",
+                "k = 4"
+            ],
+            correct: 1,
+            explanation: "عشان تكون متصلة عند نقطة التحول \\( x = 3 \\)، لازم النهاية اليمنى تساوي اليسرى وتساوي قيمة الدالة: \\( f(3) = 3k + 1 \\). واليمين: \\( 3^2 - 2 = 7 \\). نساوي الطرفين: \\( 3k + 1 = 7 \\implies 3k = 6 \\implies k = 2 \\)."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to 0} \\frac{1 - \cos(x)}{x} \\).",
+            options: [
+                "1",
+                "0",
+                "\\( \\infty \\)",
+                "Does Not Exist"
+            ],
+            correct: 1,
+            explanation: "دي نهاية قياسية مشهورة جداً في التفاضل والتكامل وقيمتها دايماً تساوي صفر. ويمكن إثباتها برضه بضرب البسط والمقام في المرافق الميكانيكي للمقدار."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Evaluate \\( \\lim_{x \\to 1} \\frac{\\sqrt{x} - 1}{x - 1} \\).",
+            options: [
+                "0",
+                "1",
+                "\\( \\frac{1}{2} \\)",
+                "2"
+            ],
+            correct: 2,
+            explanation: "بالتعويض المباشر تطلع صفر على صفر. نحلل المقام كفرق بين مربعين: \\( x - 1 = (\\sqrt{x} - 1)(\\sqrt{x} + 1) \\). نطير القوس الصفري من البسط والمقام، يتبقى \\( \\frac{1}{\\sqrt{x} + 1} \\). بالتعويض عن x بـ 1 تطلع \\( 1/2 \\)."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "Find the vertical asymptotes of \\( f(x) = \\frac{x+2}{x^2 - 1} \\).",
+            options: [
+                "x = 2",
+                "x = 1 and x = -1",
+                "x = 1 only",
+                "No vertical asymptotes"
+            ],
+            correct: 1,
+            explanation: "خطوط التقارب الرأسية (Vertical Asymptotes) بتحدث عند القيم اللي بتخلي مقام الدالة الكسرية يساوي صفر (أصفار المقام) بشرط متخليش البسط صفر برضه. أصفار مقام \\( x^2 - 1 = 0 \\) هي \\( x = 1 \\) و \\( x = -1 \\)."
+        },
+        {
+            category: "Lecture 2: Limits & Continuity",
+            text: "What kind of discontinuity does \\( f(x) = \\frac{x-3}{x^2 - 9} \\) have at \\( x=3 \\)?",
+            options: [
+                "Jump Discontinuity",
+                "Infinite Discontinuity",
+                "Removable Discontinuity (اتصال قابل للإزالة)",
+                "Essential Discontinuity"
+            ],
+            correct: 2,
+            explanation: "لو حللنا المقام \\( (x-3)(x+3) \\) وطيرنا الـ \\( (x-3) \\) مع البسط، الدالة هتبقى معرفة عند الـ 3 بنهاية حقيقية قيمتها \\( 1/6 \\). طالما المشكلة بتتحل بالتحليل والتطير، يبقى نوع عدم الاتصال هو قابل للإزالة (Removable)."
+        },
+
+        // ==================== LECTURE 3: Differentiation (Definition & Power Rule) ====================
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find the derivative \\( f'(x) \\) for \\( f(x) = 4x^5 - 3x^2 + 7 \\).",
+            options: [
+                "\\( 20x^4 - 6x + 7 \\)",
+                "\\( 20x^4 - 6x \\)",
+                "\\( 4x^4 - 3x \\)",
+                "\\( 20x^5 - 6x^2 \\)"
+            ],
+            correct: 1,
+            explanation: "بننزل الأس ونطرح منه 1 في كل حد: تفاضل \\( 4x^5 \\) هو \\( 4 \\times 5x^4 = 20x^4 \\)، وتفاضل \\( -3x^2 \\) هو \\( -3 \\times 2x^1 = -6x \\)، وتفاضل الثابت 7 بصفر دايماً. يبقى الناتج \\( 20x^4 - 6x \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "What is the slope of the tangent line to \\( f(x) = x^2 - 3x \\) at \\( x=2 \\)?",
+            options: [
+                "1",
+                "-1",
+                "2",
+                "0"
+            ],
+            correct: 0,
+            explanation: "ميل مماس المنحنى هو المشتقة الأولى للدالة عند تلك النقطة. نجيب المشتقة الأولى: \\( f'(x) = 2x - 3 \\). دلوقتي نعوض بقيمة x بـ 2: \\( f'(2) = 2(2) - 3 = 1 \\). ميل المماس هو 1."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find the derivative of \\( f(x) = \\frac{1}{x^2} \\).",
+            options: [
+                "\\( \\frac{2}{x^3} \\)",
+                "\\( -\\frac{2}{x^3} \\)",
+                "\\( -\\frac{2}{x} \\)",
+                "\\( -2x \\)"
+            ],
+            correct: 1,
+            explanation: "نرفع المتغير للبسط بأس سالب لتسهيل الاشتقاق: \\( f(x) = x^{-2} \\). نطبق قاعدة القوة: بننزل الأس ونطرح 1: \\( f'(x) = -2x^{-3} \\)، ونرجع ننزله المقام بأس موجب فيبقى \\( -\\frac{2}{x^3} \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find the derivative of \\( f(x) = 3\\sqrt{x} \\).",
+            options: [
+                "\\( \\frac{3}{2\\sqrt{x}} \\)",
+                "\\( \\frac{1}{2\\sqrt{x}} \\)",
+                "\\( 3\\sqrt{x} \\)",
+                "\\( \\frac{3}{2}x \\)"
+            ],
+            correct: 0,
+            explanation: "نكتب الجذر كقوة كسرية: \\( f(x) = 3x^{1/2} \\). نشتق بالقاعدة: \\( f'(x) = 3 \\times \\frac{1}{2} x^{-1/2} = \\frac{3}{2\\sqrt{x}} \\). وهي مشتقة الجذر الشهيرة: 1 على ضعف الجذر مضروب في الثابت."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "If a particle's position is \\( s(t) = t^3 - 6t^2 + 9t \\), find its acceleration at \\( t=2 \\).",
+            options: [
+                "0",
+                "-3",
+                "6",
+                "-12"
+            ],
+            correct: 0,
+            explanation: "المشتقة الأولى للسرعة هي العجلة (المشتقة الثانية للمسافة). المشتقة الأولى (السرعة): \\( v(t) = s'(t) = 3t^2 - 12t + 9 \\). المشتقة الثانية (العجلة): \\( a(t) = v'(t) = 6t - 12 \\). نعوض بـ t = 2: \\( a(2) = 6(2) - 12 = 0 \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find the derivative of the product \\( y = (x^2 + 1)(x^3 - 3) \\).",
+            options: [
+                "\\( 5x^4 + 3x^2 - 6x \\)",
+                "\\( 6x^5 \\)",
+                "\\( 5x^4 - 6x \\)",
+                "\\( 2x(3x^2) \\)"
+            ],
+            correct: 0,
+            explanation: "قاعدة اشتقاق حاصل ضرب دالتين: الأولى في مشتقة الثانية + الثانية في مشتقة الأولى: \\( y' = (x^2+1)(3x^2) + (x^3-3)(2x) = 3x^4 + 3x^2 + 2x^4 - 6x = 5x^4 + 3x^2 - 6x \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find the derivative of \\( y = \\frac{x+1}{x-1} \\) at \\( x=2 \\).",
+            options: [
+                "-2",
+                "2",
+                "-4",
+                "0"
+            ],
+            correct: 0,
+            explanation: "قاعدة خارج قسمة دالتين: (المقام في مشتقة البسط - البسط في مشتقة المقام) / (المقام تربيع) \\( y' = \\frac{(x-1)(1) - (x+1)(1)}{(x-1)^2} = \\frac{x-1-x-1}{(x-1)^2} = \\frac{-2}{(x-1)^2} \\). نعوض بـ x=2: \\( \\frac{-2}{(2-1)^2} = -2 \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "At what point on the curve \\( y = x^2 - 4x \\) is the tangent line horizontal?",
+            options: [
+                "\\( (2, -4) \\)",
+                "\\( (4, 0) \\)",
+                "\\( (0, 0) \\)",
+                "\\( (2, 0) \\)"
+            ],
+            correct: 0,
+            explanation: "المماس الأفقي يعني ميله يساوي صفر، وبالتالي المشتقة الأولى تساوي صفر: \\( y' = 2x - 4 = 0 \\implies 2x = 4 \\implies x = 2 \\). عشان نجيب الـ y نعوض في المنحنى الأصلي: \\( y = (2)^2 - 4(2) = 4 - 8 = -4 \\). يبقى النقطة هي \\( (2, -4) \\)."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "If \\( f(x) = |x-2| \\), at which point is \\( f(x) \\) not differentiable?",
+            options: [
+                "x = 0",
+                "x = 2",
+                "x = -2",
+                "Differentiable everywhere"
+            ],
+            correct: 1,
+            explanation: "دالة القيمة المطلقة بيكون ليها زاوية حادة (Corner) عند أصفار ما بداخل المطلق. عند \\( x = 2 \\)، الميل من اليمين يساوي +1 والميل من اليسار يساوي -1، وطالما المشتقة من اليمين لا تساوي اليسار فالدالة غير قابلة للاشتقاق عند 2."
+        },
+        {
+            category: "Lecture 3: Differentiation",
+            text: "Find \\( \\frac{dy}{dx} \\) for \\( y = \\pi^2 \\).",
+            options: [
+                "\\( 2\\pi \\)",
+                "\\( \\pi \\)",
+                "0",
+                "1"
+            ],
+            correct: 2,
+            explanation: "ركز يا باشمهندس ومتتخدعش! الـ \\( \\pi \\) هو ثابت رياضي تقريبي قيمته 3.14، وتربيعه برضه ثابت قيمته تقريباً 9.86. مشتقة أي ثابت مهما كان شكله دايماً تساوي صفر!"
+        },
+
+        // ==================== LECTURE 4: Derivatives of Trigonometric Functions & Chain Rule ====================
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the derivative of \\( y = \\sin(3x^2) \\).",
+            options: [
+                "\\( \\cos(3x^2) \\)",
+                "\\( 6x \\cos(3x^2) \\)",
+                "\\( -6x \\cos(3x^2) \\)",
+                "\\( 6x \\sin(3x^2) \\)"
+            ],
+            correct: 1,
+            explanation: "باستخدام قاعدة السلسلة (Chain Rule)، بنشتق الدالة الخارجية أولاً مع الاحتفاظ بالداخلية كما هي، ثم نضرب في مشتقة ما بداخل الدالة: مشتقة الـ sine هي cosine، ومشتقة الـ \\( 3x^2 \\) هي \\( 6x \\)، فيكون الناتج \\( 6x\\cos(3x^2) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the derivative of \\( y = \\tan(x) + \\sec(x) \\).",
+            options: [
+                "\\( \\sec^2(x) + \\sec(x)\\tan(x) \\)",
+                "\\( \\sec^2(x) - \\sec(x)\\tan(x) \\)",
+                "\\( \\cot(x) + \\csc(x) \\)",
+                "\\( \\sec^2(x) + \\tan^2(x) \\)"
+            ],
+            correct: 0,
+            explanation: "اشتقاق مباشر لحاصل جمع دالتين مثلثيتين: مشتقة الـ \\( \\tan(x) \\) هي \\( \\sec^2(x) \\)، ومشتقة الـ \\( \\sec(x) \\) هي \\( \\sec(x)\\tan(x) \\). نجمعهم مباشرة للحصول على الإجابة."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find \\( f'(x) \\) for \\( f(x) = \\cos^3(x) \\).",
+            options: [
+                "\\( 3\\cos^2(x) \\)",
+                "\\( -3\\cos^2(x)\\sin(x) \\)",
+                "\\( 3\\sin^2(x) \\)",
+                "\\( -3\\sin^3(x) \\)"
+            ],
+            correct: 1,
+            explanation: "بنعامل الدالة دي كقوس مرفوع لأس: \\( [\\cos(x)]^3 \\). ننزل الأس 3، نطرح منه 1 فيبقى \\( 3\\cos^2(x) \\)، بعدين نضرب في مشتقة ما بداخل القوس اللي هي مشتقة الكوزين \\( -\\sin(x) \\). فيكون الناتج النهائي \\( -3\\cos^2(x)\\sin(x) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the derivative of \\( y = x^2 \\sin(x) \\).",
+            options: [
+                "\\( 2x \\cos(x) \\)",
+                "\\( 2x \\sin(x) + x^2 \\cos(x) \\)",
+                "\\( 2x \\sin(x) - x^2 \\cos(x) \\)",
+                "\\( x^2 \\cos(x) \\)"
+            ],
+            correct: 1,
+            explanation: "قاعدة الضرب: الأولى في مشتقة الثانية + الثانية في مشتقة الأولى. الأولى \\( x^2 \\) في مشتقة الساين \\( \\cos(x) \\) + الثانية \\( \\sin(x) \\) في مشتقة الأولى \\( 2x \\). فيكون الناتج المجموع هو الخيار الثاني."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the derivative of \\( y = \\csc(2x) \\).",
+            options: [
+                "\\( -\\csc(2x)\\cot(2x) \\)",
+                "\\( -2\\csc(2x)\\cot(2x) \\)",
+                "\\( 2\\csc(2x)\\cot(2x) \\)",
+                "\\( -2\\csc^2(2x) \\)"
+            ],
+            correct: 1,
+            explanation: "مشتقة الـ \\( \\csc(u) \\) هي \\( -\\csc(u)\\cot(u) \\times u' \\). هنا الـ \\( u = 2x \\) ومشتقته هي 2، يبقى نضرب في 2 ونحط علامة السالب، فتطلع \\( -2\\csc(2x)\\cot(2x) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the derivative of \\( y = \\tan^2(5x) \\).",
+            options: [
+                "\\( 2\\tan(5x) \\)",
+                "\\( 10\\tan(5x)\\sec^2(5x) \\)",
+                "\\( 5\\sec^2(5x) \\)",
+                "\\( 10\\sec^2(5x) \\)"
+            ],
+            correct: 1,
+            explanation: "دي سلسلة ثلاثية الطبقات! 1) نشتق الأس: ننزل 2 فتبقى \\( 2\\tan(5x) \\). 2) نشتق الـ tan فتبقى \\( \\sec^2(5x) \\). 3) نشتق الزاوية 5x فتبقى 5. نضرب كله في بعضه: \\( 2 \\times 5 \\times \\tan(5x) \\times \\sec^2(5x) = 10\\tan(5x)\\sec^2(5x) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "If \\( y = \\sin(u) \\) and \\( u = x^2 - 1 \\), find \\( \\frac{dy}{dx} \\).",
+            options: [
+                "\\( \\cos(x^2 - 1) \\)",
+                "\\( 2x\\cos(x^2 - 1) \\)",
+                "\\( -2x\\cos(x^2 - 1) \\)",
+                "\\( 2x\\sin(x^2 - 1) \\)"
+            ],
+            correct: 1,
+            explanation: "بتطبيق قاعدة السلسلة: \\( \\frac{dy}{dx} = \\frac{dy}{du} \\times \\frac{du}{dx} = \\cos(u) \\times 2x = 2x\\cos(x^2 - 1) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "What is the derivative of \\( y = \\cot(x^3) \\)?",
+            options: [
+                "\\( -\\csc^2(x^3) \\)",
+                "\\( -3x^2\\csc^2(x^3) \\)",
+                "\\( 3x^2\\csc^2(x^3) \\)",
+                "\\( -3x^2\\sec^2(x^3) \\)"
+            ],
+            correct: 1,
+            explanation: "مشتقة الـ \\( \\cot(u) \\) هي \\( -\\csc^2(u) \\times u' \\). هنا الزاوية هي \\( x^3 \\) ومشتقتها \\( 3x^2 \\)، يبقى نضربها برة ونحط علامة السالب لتصبح \\( -3x^2\\csc^2(x^3) \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find the equation of the tangent line to \\( y = \\sin(x) \\) at the origin \\( (0,0) \\).",
+            options: [
+                "y = 0",
+                "y = x",
+                "y = -x",
+                "y = 2x"
+            ],
+            correct: 1,
+            explanation: "الميل هو المشتقة الأولى: \\( y' = \\cos(x) \\). عند origin \\( x=0 \\) يكون الميل \\( m = \\cos(0) = 1 \\). معادلة الخط المستقيم بمرورها بنقطة الأصل هي \\( y = mx \\implies y = 1x \\implies y = x \\)."
+        },
+        {
+            category: "Lecture 4: Trigonometric & Chain Rule",
+            text: "Find \\( \\frac{d^2}{dx^2}(\\cos(2x)) \\).",
+            options: [
+                "\\( -2\\sin(2x) \\)",
+                "\\( -4\\cos(2x) \\)",
+                "\\( 4\\cos(2x) \\)",
+                "\\( -4\\sin(2x) \\)"
+            ],
+            correct: 1,
+            explanation: "المشتقة الأولى: \\( y' = -2\\sin(2x) \\). المشتقة الثانية: نشتق كمان مرة، مشتقة الساين بكوزين ونضرب برة في 2 لتصبح \\( -4\\cos(2x) \\)."
+        },
+
+        // ==================== LECTURE 5: Derivatives of Exponential & Logarithmic Functions ====================
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find \\( f'(x) \\) for \\( f(x) = e^{5x} \\).",
+            options: [
+                "\\( e^{5x} \\)",
+                "\\( 5e^{5x} \\)",
+                "\\( 5xe^{5x-1} \\)",
+                "\\( \\frac{1}{5}e^{5x} \\)"
+            ],
+            correct: 1,
+            explanation: "تفاضل الدالة الأسية الطبيعية \\( e^u \\) هو نفسها مضروبة في تفاضل الأس: \\( e^{5x} \\times 5 = 5e^{5x} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find the derivative of \\( y = \\ln(x^2 + 1) \\).",
+            options: [
+                "\\( \\frac{1}{x^2 + 1} \\)",
+                "\\( \\frac{2x}{x^2 + 1} \\)",
+                "\\( \\frac{x}{x^2 + 1} \\)",
+                "\\( 2x\\ln(x^2 + 1) \\)"
+            ],
+            correct: 1,
+            explanation: "تفاضل الدالة اللوغاريتمية الطبيعية \\( \\ln(u) \\) هو مشتقة ما بداخل اللوغاريتم مقسومة على ما بداخله نفسه: \\( \\frac{u'}{u} = \\frac{2x}{x^2+1} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find the derivative of \\( y = 3^x \\).",
+            options: [
+                "\\( 3^x \\)",
+                "\\( 3^x \\ln(3) \\)",
+                "\\( x \\cdot 3^{x-1} \\)",
+                "\\( \\frac{3^x}{\\ln(3)} \\)"
+            ],
+            correct: 1,
+            explanation: "لما يكون الأساس أي رقم غير الـ e (دالة أسية عامة)، المشتقة بتكون الدالة نفسها مضروبة في لوغاريتم الأساس الطبيعي: \\( a^x \\ln(a) \\)، وهنا الأساس 3 يبقى الناتج \\( 3^x \\ln(3) \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find \\( f'(x) \\) for \\( f(x) = x \\ln(x) \\).",
+            options: [
+                "\\( 1 \\)",
+                "\\( \\ln(x) \\)",
+                "\\( \\ln(x) + 1 \\)",
+                "\\( \\frac{1}{x} \\)"
+            ],
+            correct: 2,
+            explanation: "باستخدام قاعدة حاصل الضرب: الأولى \\( x \\) في مشتقة الثانية \\( 1/x \\) + الثانية \\( \\ln(x) \\) في مشتقة الأولى \\( 1 \\). التبسيط: \\( x(1/x) + \\ln(x) = 1 + \\ln(x) \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "What is the derivative of \\( y = e^{\\sin(x)} \\)?",
+            options: [
+                "\\( e^{\\sin(x)} \\)",
+                "\\( \\cos(x)e^{\\sin(x)} \\)",
+                "\\( -\\cos(x)e^{\\sin(x)} \\)",
+                "\\( e^{\\cos(x)} \\)"
+            ],
+            correct: 1,
+            explanation: "دالة أسية، تفاضلها هو نفسها مضروبة في مشتقة الأس. الأس هو \\( \\sin(x) \\) وتفاضله هو \\( \\cos(x) \\). الناتج يكون \\( \\cos(x)e^{\\sin(x)} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find \\( \\frac{dy}{dx} \\) for \\( y = \\log_2(x) \\).",
+            options: [
+                "\\( \\frac{1}{x} \\)",
+                "\\( \\frac{1}{x \\ln(2)} \\)",
+                "\\( \\frac{\\ln(2)}{x} \\)",
+                "\\( \\frac{1}{x\\log_2(e)} \\)"
+            ],
+            correct: 1,
+            explanation: "مشتقة اللوغاريتم للأساس غير الطبيعي (الأساس a) هي \\( \\frac{1}{x \\ln(a)} \\). في هذه الحالة الأساس هو 2 فيكون الناتج هو الخيار الثاني."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Evaluate the derivative of \\( y = \\ln(\\sqrt{x}) \\).",
+            options: [
+                "\\( \\frac{1}{2x} \\)",
+                "\\( \\frac{1}{\\sqrt{x}} \\)",
+                "\\( \\frac{1}{2\\sqrt{x}} \\)",
+                "\\( \\frac{2}{x} \\)"
+            ],
+            correct: 0,
+            explanation: "من خواص اللوغاريتمات نقدر ننزل الأس لتسهيل الاشتقاق: \\( y = \\ln(x^{1/2}) = \\frac{1}{2} \\ln(x) \\). دلوقتي نشتق بسهولة جداً: تفاضل الـ \\( \\ln(x) \\) هو \\( 1/x \\)، ونضربه في النص لتصبح \\( \\frac{1}{2x} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find \\( f'(x) \\) for \\( f(x) = \\frac{e^x}{x} \\).",
+            options: [
+                "\\( \\frac{e^x}{1} \\)",
+                "\\( \\frac{e^x(x-1)}{x^2} \\)",
+                "\\( \\frac{e^x(1-x)}{x^2} \\)",
+                "\\( e^x \\ln(x) \\)"
+            ],
+            correct: 1,
+            explanation: "قاعدة خارج القسمة: (المقام \\( x \\) في مشتقة البسط \\( e^x \\) - البسط \\( e^x \\) في مشتقة المقام \\( 1 \\)) / المقام تربيع \\( x^2 \\). بأخذ \\( e^x \\) عامل مشترك في البسط تطلع \\( \\frac{e^x(x-1)}{x^2} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "If \\( y = e^{x^2} \\), find \\( y'' \\).",
+            options: [
+                "\\( 2e^{x^2} \\)",
+                "\\( 4x^2 e^{x^2} \\)",
+                "\\( (4x^2 + 2)e^{x^2} \\)",
+                "\\( 2x e^{x^2} \\)"
+            ],
+            correct: 2,
+            explanation: "المشتقة الأولى: \\( y' = 2x e^{x^2} \\). المشتقة الثانية نستخدم قاعدة الضرب على المشتقة الأولى: الأولى \\( 2x \\) في مشتقة الثانية \\( 2x e^{x^2} \\) + الثانية \\( e^{x^2} \\) في مشتقة الأولى 2. نجمع ونبسط: \\( 4x^2 e^{x^2} + 2e^{x^2} = (4x^2+2)e^{x^2} \\)."
+        },
+        {
+            category: "Lecture 5: Exponential & Logarithmic",
+            text: "Find the slope of the tangent to \\( y = \\ln(2x) \\) at \\( x=1 \\).",
+            options: [
+                "\\( 2 \\)",
+                "\\( 1 \\)",
+                "\\( \\frac{1}{2} \\)",
+                "\\( 0 \\)"
+            ],
+            correct: 1,
+            explanation: "المشتقة الأولى: \\( y' = \\frac{2}{2x} = \\frac{1}{x} \\). عند \\( x = 1 \\)، يكون الميل هو \\( y'(1) = 1/1 = 1 \\)."
+        },
+
+        // ==================== LECTURE 6: Implicit Differentiation & Related Rates ====================
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "Find \\( \\frac{dy}{dx} \\) for the circle \\( x^2 + y^2 = 25 \\) using implicit differentiation.",
+            options: [
+                "\\( -\\frac{y}{x} \\)",
+                "\\( -\\frac{x}{y} \\)",
+                "\\( \\frac{x}{y} \\)",
+                "\\( 2x + 2y \\)"
+            ],
+            correct: 1,
+            explanation: "نشتق الطرفين بالنسبة لـ x: تفاضل \\( x^2 \\) هو \\( 2x \\)، وتفاضل \\( y^2 \\) هو \\( 2y y' \\) (مهم جداً نضرب في y') وتفاضل الثابت 25 بصفر. تبقى المعادلة \\( 2x + 2y y' = 0 \\implies 2y y' = -2x \\implies y' = -x/y \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "If \\( x^2 + xy + y^2 = 7 \\point \\) find \\( \\frac{dy}{dx} \\) at \\( (1, 2) \\).",
+            options: [
+                "\\( -\\frac{4}{5} \\)",
+                "\\( -\\frac{5}{4} \\)",
+                "\\( 1 \\)",
+                "\\( 0 \\)"
+            ],
+            correct: 0,
+            explanation: "نشتق الطرفين ضمنياً: \\( 2x + (x y' + y) + 2y y' = 0 \\). نجمع حدود الـ y': \\( y'(x + 2y) = -(2x + y) \\implies y' = -\\frac{2x+y}{x+2y} \\). دلوقتي نعوض بالنقطة (1, 2): \\( y' = -\\frac{2(1)+2}{1+2(2)} = -4/5 \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "A spherical balloon is inflated so that its radius increases at a rate of 2 cm/s. How fast is the volume increasing when the radius is 5 cm?",
+            options: [
+                "\\( 100\\pi \\text{ cm}^3/\\text{s} \\)",
+                "\\( 200\\pi \\text{ cm}^3/\\text{s} \\)",
+                "\\( 50\\pi \\text{ cm}^3/\\text{s} \\)",
+                "\\( 400\\pi \\text{ cm}^3/\\text{s} \\)"
+            ],
+            correct: 1,
+            explanation: "حجم الكرة هو \\( V = \\frac{4}{3}\\pi r^3 \\). نشتق بالنسبة للزمن t: \\( \\frac{dV}{dt} = 4\\pi r^2 \\frac{dr}{dt} \\). نعوض بالمعطيات: \\( r = 5 \\) و \\( \\frac{dr}{dt} = 2 \\). إذن: \\( \\frac{dV}{dt} = 4\\pi (5)^2 (2) = 4\\pi (25)(2) = 200\\pi \\text{ cm}^3/\\text{s} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "A 5m ladder leans against a wall. If the bottom of the ladder slides away at 1 m/s, how fast is the top sliding down when the bottom is 3m from the wall?",
+            options: [
+                "\\( -0.75 \\text{ m/s} \\)",
+                "\\( -1.33 \\text{ m/s} \\)",
+                "\\( -0.5 \\text{ m/s} \\)",
+                "\\( 0.75 \\text{ m/s} \\)"
+            ],
+            correct: 0,
+            explanation: "بفيثاغورس: \\( x^2 + y^2 = 25 \\). نشتق بالنسبة للزمن: \\( 2x \\frac{dx}{dt} + 2y \\frac{dy}{dt} = 0 \\implies x \\frac{dx}{dt} + y \\frac{dy}{dt} = 0 \\). عندما يكون البعد الأفقي \\( x=3 \\)، يكون البعد الرأسي \\( y = 4 \\) (من فيثاغورس). ونعلم أن \\( \\frac{dx}{dt} = 1 \\). بالتعويض: \\( 3(1) + 4\\frac{dy}{dt} = 0 \\implies \\frac{dy}{dt} = -3/4 = -0.75 \\text{ m/s} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "If \\( \\sin(xy) = x \\), find \\( \\frac{dy}{dx} \\) implicitly.",
+            options: [
+                "\\( \\frac{1 - y\\cos(xy)}{x\\cos(xy)} \\)",
+                "\\( \\frac{1}{\\cos(xy)} \\)",
+                "\\( \\frac{1 - y}{x} \\)",
+                "\\( \\frac{\\cos(xy) - y}{x} \\)"
+            ],
+            correct: 0,
+            explanation: "نشتق الطرفين بالنسبة لـ x: تفاضل الجانب الأيمن هو 1. وتفاضل الأيسر: \\( \\cos(xy) \\cdot (y + x y') = 1 \\implies y\\cos(xy) + x y' \\cos(xy) = 1 \\implies x y' \\cos(xy) = 1 - y\\cos(xy) \\implies y' = \\frac{1 - y\\cos(xy)}{x\\cos(xy)} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "Find the derivative \\( \\frac{dy}{dx} \\) for \\( e^y = x + y \\).",
+            options: [
+                "\\( \\frac{1}{e^y} \\)",
+                "\\( \\frac{1}{e^y - 1} \\)",
+                "\\( \\frac{e^y}{e^y - 1} \\)",
+                "\\( 1 \\)"
+            ],
+            correct: 1,
+            explanation: "نشتق الطرفين بالنسبة لـ x: تفاضل الطرف الأيسر هو \\( e^y y' \\)، وتفاضل الأيمن هو \\( 1 + y' \\). يبقى: \\( e^y y' = 1 + y' \\implies y'(e^y - 1) = 1 \\implies y' = \\frac{1}{e^y - 1} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "The radius of a circle increases at a rate of 3 cm/s. How fast is the area increasing when the radius is 10 cm?",
+            options: [
+                "\\( 30\\pi \\text{ cm}^2/\\text{s} \\)",
+                "\\( 60\\pi \\text{ cm}^2/\\text{s} \\)",
+                "\\( 90\\pi  \\text{ cm}^2/\\text{s} \\)",
+                "\\( 300\\pi  \\text{ cm}^2/\\text{s} \\)"
+            ],
+            correct: 1,
+            explanation: "مساحة الدائرة هي \\( A = \\pi r^2 \\). نشتق بالنسبة للزمن: \\( \\frac{dA}{dt} = 2\\pi r \\frac{dr}{dt} \\). نعوض بالقيم المعطاة: \\( r = 10 \\) و \\( \\frac{dr}{dt} = 3 \\). فتصبح النتيجة: \\( \\frac{dA}{dt} = 2\\pi (10)(3) = 60\\pi \\text{ cm}^2/\\text{s} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "Find the slope of the tangent line to the curve \\( y^3 + y = x^2 \\) at the point \\( (2, 1) \\).",
+            options: [
+                "1",
+                "2",
+                "\\( \\frac{1}{2} \\)",
+                "4"
+            ],
+            correct: 0,
+            explanation: "نشتق ضمنياً بالنسبة لـ x: \\( 3y^2 y' + y' = 2x \\implies y'(3y^2 + 1) = 2x \\implies y' = \\frac{2x}{3y^2+1} \\). نعوض بالنقطة (2, 1): \\( y' = \\frac{2(2)}{3(1)^2+1} = \\frac{4}{4} = 1 \\). ميل المماس هو 1."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "Two cars start moving from the same point. One travels south at 60 mph, the other travels west at 80 mph. How fast is the distance between them increasing after 2 hours?",
+            options: [
+                "100 mph",
+                "140 mph",
+                "200 mph",
+                "50 mph"
+            ],
+            correct: 0,
+            explanation: "نفرض أن مسافة السيارة الأولى هي y والسيارة الثانية هي x والمسافة بينهما هي z. من فيثاغورس: \\( z^2 = x^2 + y^2 \\). بالاشتقاق للزمن: \\( z \\frac{dz}{dt} = x\\frac{dx}{dt} + y\\frac{dy}{dt} \\). بعد ساعتين، السيارة الأولى قطعت \\( y = 120 \\) ميل، والسيارة الثانية قطعت \\( x = 160 \\) ميل، فتكون \\( z = 200 \\) ميل. بالتعويض: \\( 200 \\frac{dz}{dt} = 160(80) + 120(60) = 12800 + 7200 = 20000 \\implies \\frac{dz}{dt} = 100 \\text{ mph} \\)."
+        },
+        {
+            category: "Lecture 6: Implicit & Related Rates",
+            text: "Find the slope of the tangent to the curve \\( x^3 + y^3 = 6xy \\) at the point \\( (3, 3) \\).",
+            options: [
+                "1",
+                "-1",
+                "0",
+                "Does Not Exist"
+            ],
+            correct: 1,
+            explanation: "نشتق الطرفين ضمنياً بالنسبة لـ x: \\( 3x^2 + 3y^2 y' = 6(y + x y') \\). نقسم الطرفين على 3 لتسهيل الحل: \\( x^2 + y^2 y' = 2(y + x y') \\). نعوض بالنقطة (3, 3) مباشرة: \\( 9 + 9y' = 2(3 + 3y') \\implies 9 + 9y' = 6 + 6y' \\implies 3y' = -3 \\implies y' = -1 \\)."
+        },
+
+        // ==================== LECTURE 7: Applications of Derivatives (Extrema & Curve Sketching) ====================
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "Find the critical points of \\( f(x) = x^3 - 3x^2 \\).",
+            options: [
+                "x = 0 and x = 3",
+                "x = 0 and x = 2",
+                "x = 1 and x = 2",
+                "x = 0 only"
+            ],
+            correct: 1,
+            explanation: "النقاط الحرجة (Critical Points) بتحدث لما تكون المشتقة الأولى تساوي صفر أو غير معرفة. نجيب المشتقة الأولى: \\( f'(x) = 3x^2 - 6x \\). نساويها بالصفر: \\( 3x(x - 2) = 0 \\implies x = 0 \\) أو \\( x = 2 \\)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "What are the dimensions of a rectangle with perimeter 40m that maximize its area?",
+            options: [
+                "\\( 15 \\text{ m} \\times 5 \\text{ m} \\)",
+                "\\( 12 \\text{ m} \\times 8 \\text{ m} \\)",
+                "\\( 10 \\text{ m} \\times 10 \\text{ m} \\)",
+                "\\( 20 \\text{ m} \\times 20 \\text{ m} \\)"
+            ],
+            correct: 2,
+            explanation: "المحيط هو \\( 2(x+y) = 40 \\implies x+y = 20 \\implies y = 20-x \\). المساحة المراد تعظيمها هي \\( A = x y = x(20-x) = 20x - x^2 \\). نشتق ونساوي بالصفر: \\( A' = 20 - 2x = 0 \\implies x = 10 \\). بما إن المجموع 20، إذن الضلع التاني برضه 10. (المربع دايماً بيعطي أقصى مساحة ممكنة لمحيط ثابت)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "Determine the interval on which the function \\( f(x) = x^3 - 6x^2 \\) is concave upward (محدبة لأسفل/مقعرة لأعلى).",
+            options: [
+                "\\( (-\\infty, 2) \\)",
+                "\\( (2, \\infty) \\)",
+                "\\( (-\\infty, 0) \\)",
+                "\\( (0, \\infty) \\)"
+            ],
+            correct: 1,
+            explanation: "التحدب بنعرفه من إشارة المشتقة الثانية. المشتقة الأولى: \\( f'(x) = 3x^2 - 12x \\). المشتقة الثانية: \\( f''(x) = 6x - 12 \\). التحدب لأعلى (concave upward) بيحصل لما تكون المشتقة الثانية موجبة: \\( 6x - 12 > 0 \\implies 6x > 12 \\implies x > 2 \\)، يعني الفترة مفتوحة من 2 للمالانهاية."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "Find the x-coordinate of the inflection point (نقطة الانقلاب) of \\( f(x) = 2x^3 - 3x^2 - 12x \\).",
+            options: [
+                "x = 1",
+                "x = 0.5",
+                "x = 2",
+                "x = -1"
+            ],
+            correct: 1,
+            explanation: "نقطة الانقلاب هي النقطة التي يتغير عندها سلوك التحدب للدالة وتكون عندها المشتقة الثانية تساوي صفر. المشتقة الأولى: \\( f'(x) = 6x^2 - 6x - 12 \\). المشتقة الثانية: \\( f''(x) = 12x - 6 \\). نساويها بالصفر: \\( 12x - 6 = 0 \\implies 12x = 6 \\implies x = 0.5 \\)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "Find the absolute minimum value of \\( f(x) = x^2 - 4x + 5 \\) on the closed interval \\( [0, 3] \\).",
+            options: [
+                "1",
+                "2",
+                "5",
+                "0"
+            ],
+            correct: 0,
+            explanation: "نختبر قيم الدالة عند أطراف الفترة وعند النقاط الحرجة بداخلها. النقطة الحرجة: \\( f'(x) = 2x - 4 = 0 \\implies x = 2 \\) (وهي تقع في الفترة). الآن نحسب قيم الدالة: عند البداية \\( f(0) = 5 \\)، عند النهاية \\( f(3) = 3^2 - 4(3) + 5 = 2 \\)، عند النقطة الحرجة \\( f(2) = 2^2 - 4(2) + 5 = 1 \\). أقل قيمة مطلقة هي 1 عند الـ x=2."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "Find the critical points of \\( f(x) = x^4 - 4x^3 \\).",
+            options: [
+                "x = 0 and x = 3",
+                "x = 0 and x = 4",
+                "x = 3 only",
+                "x = 1 and x = 3"
+            ],
+            correct: 0,
+            explanation: "المشتقة الأولى: \\( f'(x) = 4x^3 - 12x^2 \\). نساويها بالصفر لإيجاد النقاط الحرجة: \\( 4x^2(x - 3) = 0 \\implies x = 0 \\) أو \\( x = 3 \\)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "If \\( f'(c) = 0 \\) and \\( f''(c) > 0 \\), what does the Second Derivative Test indicate about the point \\( c \\)?",
+            options: [
+                "Local Maximum",
+                "Local Minimum",
+                "Inflection Point",
+                "No information can be determined"
+            ],
+            correct: 1,
+            explanation: "اختبار المشتقة الثانية بيقولك: لو المشتقة الأولى بصفر (مماس أفقي)، والمشتقة الثانية موجبة (يعني المنحنى مقعر لأعلى ومفتوح لفوق زي الابتسامة)، يبقى النقطة دي بتمثل نهاية صغرى محلية (Local Minimum)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "What is the maximum value of \\( f(x) = -x^2 + 8x - 12 \\)?",
+            options: [
+                "4",
+                "2",
+                "12",
+                "8"
+            ],
+            correct: 0,
+            explanation: "الدالة تربيعية بفتحة لأسفل لأن معامل الـ تربيع سالب. نجيب القمة (النقطة الحرجة): \\( f'(x) = -2x + 8 = 0 \\implies 2x = 8 \\implies x = 4 \\). نعوض بالـ 4 في الدالة الأصلية لنجد أقصى قيمة: \\( f(4) = -(4)^2 + 8(4) - 12 = -16 + 32 - 12 = 4 \\)."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "On which interval is the function \\( f(x) = x^2 - 6x + 8 \\) decreasing?",
+            options: [
+                "\\( (3, \\infty) \\)",
+                "\\( (-\\infty, 3) \\)",
+                "\\( (-\\infty, \\infty) \\)",
+                "\\( (2, 4) \\)"
+            ],
+            correct: 1,
+            explanation: "تكون الدالة متناقصة (decreasing) عندما تكون مشتقتها الأولى سالبة تماماً: \\( f'(x) = 2x - 6 < 0 \\implies 2x < 6 \\implies x < 3 \\). إذن الدالة تتناقص في الفترة المفتوحة من سالب ما لا نهاية إلى 3."
+        },
+        {
+            category: "Lecture 7: Applications of Derivatives",
+            text: "According to Rolle's Theorem, if \\( f(x) \\) is continuous on \\( [a,b] \\), differentiable on \\( (a,b) \\), and \\( f(a) = f(b) \\), then there exists \\( c \\in (a,b) \\) such that:",
+            options: [
+                "\\( f'(c) = 0 \\)",
+                "\\( f'(c) = \\frac{f(b)-f(a)}{b-a} \\)",
+                "\\( f(c) = 0 \\)",
+                "\\( f''(c) = 0 \\)"
+            ],
+            correct: 0,
+            explanation: "نظرية رول (Rolle's Theorem) بتقول إنه طالما الدالة متصلة وقابلة للاشتقاق، وبدأت وانتهت عند نفس الارتفاع، يبقى أكيد فيه نقطة واحدة على الأقل في النص المماس عندها أفقي، يعني المشتقة الأولى عندها بصفر \\( f'(c) = 0 \\)."
+        },
+
+        // ==================== LECTURE 8: Definite & Indefinite Integrals ====================
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the indefinite integral \\( \\int (3x^2 - 4x + 5) \, dx \\).",
+            options: [
+                "\\( x^3 - 2x^2 + 5x + C \\)",
+                "\\( 3x^3 - 4x^2 + 5x + C \\)",
+                "\\( 6x - 4 + C \\)",
+                "\\( x^3 - 4x^2 + 5x + C \\)"
+            ],
+            correct: 0,
+            explanation: "بنكامل كل حد بإننا نزود على الأس 1 ونقسم على الأس الجديد: تكامل \\( 3x^2 \\) هو \\( \\frac{3x^3}{3} = x^3 \\)، وتكامل \\( -4x \\) هو \\( -\\frac{4x^2}{2} = -2x^2 \\)، وتكامل الثابت 5 هو \\( 5x \\)، ومننساش ثابت التكامل C دايماً في التكامل غير المحدود."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Evaluate the definite integral \\( \\int_{1}^{3} (2x + 1) \, dx \\).",
+            options: [
+                "8",
+                "10",
+                "12",
+                "6"
+            ],
+            correct: 1,
+            explanation: "نجيب المشتقة العكسية أولاً: \\( \\int (2x+1) \, dx = x^2 + x \\). دلوقتي نعوض بحدود التكامل من 1 لـ 3: القيمة عند الحد العلوي \\( (3^2 + 3) = 12 \\) ناقص القيمة عند الحد السفلي \\( (1^2 + 1) = 2 \\). فتكون النتيجة \\( 12 - 2 = 10 \\)."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the indefinite integral \\( \\int \\sin(2x) \, dx \\).",
+            options: [
+                "\\( 2\\cos(2x) + C \\)",
+                "\\( -\\frac{1}{2}\\cos(2x) + C \\)",
+                "\\( \\frac{1}{2}\\cos(2x) + C \\)",
+                "\\( -\\cos(2x) + C \\)"
+            ],
+            correct: 1,
+            explanation: "تكامل الـ sine بسالب cosine، وبما إن الزاوية خطية ولها معامل (2)، بنقسم على هذا المعامل عند إجراء التكامل: \\( -\\frac{1}{2}\\cos(2x) + C \\)."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Evaluate the definite integral \\( \\int_{0}^{\\pi} \\cos(x) \, dx \\).",
+            options: [
+                "1",
+                "-1",
+                "0",
+                "2"
+            ],
+            correct: 2,
+            explanation: "تكامل الـ cosine هو sine: \\( \\int_{0}^{\\pi} \\cos(x) \, dx = [\\sin(x)]_{0}^{\\pi} = \\sin(\\pi) - \\sin(0) = 0 - 0 = 0 \\). لأن المساحة فوق محور السينات تلغي المساحة اللي تحته."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the indefinite integral \\( \\int e^{-3x} \, dx \\).",
+            options: [
+                "\\( e^{-3x} + C \\)",
+                "\\( -3e^{-3x} + C \\)",
+                "\\( -\\frac{1}{3}e^{-3x} + C \\)",
+                "\\( \\frac{1}{3}e^{-3x} + C \\)"
+            ],
+            correct: 2,
+            explanation: "تكامل الدالة الأسية ذات الأس الخطي هو نفس الدالة مقسومة على معامل الـ x في الأس: \\( \\frac{e^{-3x}}{-3} + C = -\\frac{1}{3}e^{-3x} + C \\)."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the derivative \\( \\frac{d}{dx} \\int_{1}^{x} \\ln(t) \, dt \\) using Fundamental Theorem of Calculus Part 1.",
+            options: [
+                "\\( \\ln(x) \\)",
+                "\\( \\frac{1}{x} \\)",
+                "\\( x\\ln(x) - x \\)",
+                "\\( \\ln(x) - 1 \\)"
+            ],
+            correct: 0,
+            explanation: "النظرية الأساسية للتفاضل والتكامل بتقولك لو بتشتق تكامل محدود حده العلوي x، التفاضل بيلغي التكامل وترجع الدالة زي ما هي بدلالة x مباشرة: \\( \\ln(x) \\). عملية التفاضل عكس عملية التكامل تماماً!"
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Evaluate the definite integral \\( \\int_{0}^{2} 3e^x \, dx \\).",
+            options: [
+                "\\( 3e^2 \\)",
+                "\\( 3e^2 - 3 \\)",
+                "\\( 3e^2 + 3 \\)",
+                "\\( e^2 - 1 \\)"
+            ],
+            correct: 1,
+            explanation: "تكامل الـ \\( 3e^x \\) هو نفسه \\( 3e^x \\). بالتعويض بحدود التكامل من 0 لـ 2: \\( 3e^2 - 3e^0 = 3e^2 - 3(1) = 3e^2 - 3 \\)."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the indefinite integral \\( \\int \\frac{1}{x} \, dx \\) for \\( x \\neq 0 \\).",
+            options: [
+                "\\( \\ln|x| + C \\)",
+                "\\( -\\frac{1}{x^2} + C \\)",
+                "\\( 1 + C \\)",
+                "\\( e^x + C \\)"
+            ],
+            correct: 0,
+            explanation: "دي الدالة الوحيدة اللي بنستثنيها من قاعدة القوة لأن الأس بتاعها -1. تفاضل الـ \\( \\ln|x| \\) هو \\( 1/x \\)، وبالتالي فإن تكامل الـ \\( 1/x \\) هو الـ \\( \\ln|x| + C \\) مباشرة."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Evaluate \\( \\int_{-1}^{1} x^3 \, dx \\).",
+            options: [
+                "\\( \\frac{1}{2} \\)",
+                "0",
+                "\\( \\frac{1}{4} \\)",
+                "2"
+            ],
+            correct: 1,
+            explanation: "الدالة \\( x^3 \\) هي دالة فردية (Odd function)، وحدود التكامل متماثلة حول الصفر من -1 لـ 1. تكامل أي دالة فردية على فترة متماثلة دايماً يساوي صفر لأن المساحات بتلغي بعضها بالملي."
+        },
+        {
+            category: "Lecture 8: Definite & Indefinite Integrals",
+            text: "Find the indefinite integral \\( \\int \\sec^2(x) \, dx \\).",
+            options: [
+                "\\( \\tan(x) + C \\)",
+                "\\( \\sec(x) + C \\)",
+                "\\( -\\cot(x) + C \\)",
+                "\\( \\tan^2(x) + C \\)"
+            ],
+            correct: 0,
+            explanation: "بما أننا نعلم أن تفاضل الـ \\( \\tan(x) \\) هو \\( \\sec^2(x) \\)، فإن المشتقة العكسية (التكامل) للـ \\( \\sec^2(x) \\) هي الـ \\( \\tan(x) + C \\)."
+        },
+
+        // ==================== LECTURE 9: Integration & Substitution + Integration by Parts ====================
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Evaluate \\( \\int 2x e^{x^2} \, dx \\) using u-substitution.",
+            options: [
+                "\\( e^{x^2} + C \\)",
+                "\\( x^2 e^{x^2} + C \\)",
+                "\\( 2e^{x^2} + C \\)",
+                "\\( e^{2x} + C \\)"
+            ],
+            correct: 0,
+            explanation: "بنفرض أن الـ \\( u = x^2 \\) (الأس)، فيكون تفاضله \\( du = 2x \, dx \\). بالتعويض في التكامل، يتحول إلى: \\( \\int e^u \, du = e^u + C = e^{x^2} + C \\). أو بقاعدة أن دالة مضروبة في مشتقة أسها تعطي نفس الدالة."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Find \\( \\int x \\cos(x) \, dx \\) using Integration by Parts.",
+            options: [
+                "\\( x\\sin(x) - \\cos(x) + C \\)",
+                "\\( x\\sin(x) + \\cos(x) + C \\)",
+                "\\( -x\\sin(x) + \\cos(x) + C \\)",
+                "\\( x\\cos(x) + \\sin(x) + C \\)"
+            ],
+            correct: 1,
+            explanation: "بالتكامل بالتجزيء (Integration by Parts) بنفرض: \\( u = x \\implies du = dx \\)، و \\( dv = \\cos(x)dx \\implies v = \\sin(x) \\). القانون: \\( u v - \\int v du \\) فيكون الناتج: \\( x\\sin(x) - \\int \\sin(x)dx = x\\sin(x) - (-\\cos(x)) + C = x\\sin(x) + \\cos(x) + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Evaluate \\( \\int \\frac{x}{x^2 + 4} \, dx \\).",
+            options: [
+                "\\( \\ln(x^2 + 4) + C \\)",
+                "\\( \\frac{1}{2}\\ln(x^2 + 4) + C \\)",
+                "\\( \\tan^{-1}(x/2) + C \\)",
+                "\\( x\\ln(x^2 + 4) + C \\)"
+            ],
+            correct: 1,
+            explanation: "البسط هو شبه مشتقة المقام. مشتقة المقام \\( x^2 + 4 \\) هي \\( 2x \\). نضرب في 2 فوق ونقسم على 2 برة التكامل: \\( \\frac{1}{2} \\int \\frac{2x}{x^2 + 4} \, dx \\). بما إن البسط أصبح مشتقة المقام تماماً، النتيجة هي لوغاريتم المقام: \\( \\frac{1}{2}\\ln(x^2 + 4) + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Find \\( \\int \\ln(x) \, dx \\) using Integration by Parts.",
+            options: [
+                "\\( \\frac{1}{x} + C \\)",
+                "\\( x\\ln(x) - x + C \\)",
+                "\\( x\\ln(x) + x + C \\)",
+                "\\( \\ln(x) - x + C \\)"
+            ],
+            correct: 1,
+            explanation: "نفرض أن \\( u = \\ln(x) \\implies du = \\frac{1}{x}dx \\)، ونفرض \\( dv = dx \\implies v = x \\). نطبق القانون \\( u v - \\int v du \\): \\( x\\ln(x) - \\int x \\frac{1}{x} dx = x\\ln(x) - \\int 1 \, dx = x\\ln(x) - x + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Evaluate \\( \\int \\sin^4(x)\\cos(x) \, dx \\).",
+            options: [
+                "\\( \\frac{1}{5}\\sin^5(x) + C \\)",
+                "\\( \\frac{1}{5}\\cos^5(x) + C \\)",
+                "\\( -\\frac{1}{5}\\sin^5(x) + C \\)",
+                "\\( \\sin^5(x)\\cos^2(x) + C \\)"
+            ],
+            correct: 0,
+            explanation: "دي دالة مرفوعة لأس مضروبة في مشتقة ما بداخل القوس. ما بداخل القوس هو \\( \\sin(x) \\) ومشتقتها هي \\( \\cos(x) \\) الموجودة برة. بنزود الأس 1 ونقسم على الأس الجديد مباشرة: \\( \\frac{1}{5}\\sin^5(x) + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Find \\( \\int x e^x \, dx \\) using Integration by Parts.",
+            options: [
+                "\\( xe^x + e^x + C \\)",
+                "\\( xe^x - e^x + C \\)",
+                "\\( -xe^x + e^x + C \\)",
+                "\\( x^2 e^x + C \\)"
+            ],
+            correct: 1,
+            explanation: "نفرض الـ \\( u = x \\implies du = dx \\)، ونفرض \\( dv = e^x dx \\implies v = e^x \\). نطبق قانون التجزيء: \\( u v - \\int v du = x e^x - \\int e^x dx = xe^x - e^x + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Use substitution to evaluate \\( \\int \\frac{1}{2x+3} \, dx \\).",
+            options: [
+                "\\( \\ln|2x+3| + C \\)",
+                "\\( \\frac{1}{2}\\ln|2x+3| + C \\)",
+                "\\( 2\\ln|2x+3| + C \\)",
+                "\\( -\\frac{1}{(2x+3)^2} + C \\)"
+            ],
+            correct: 1,
+            explanation: "نفرض أن \\( u = 2x+3 \\implies du = 2 \, dx \\implies dx = du/2 \\). بالتعويض: \\( \\int \\frac{1}{u} \\cdot \\frac{du}{2} = \\frac{1}{2} \\ln|u| + C = \\frac{1}{2}\\ln|2x+3| + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Evaluate the definite integral \\( \\int_{0}^{1} x(x^2 + 1)^3 \, dx \\).",
+            options: [
+                "\\( \\frac{15}{8} \\)",
+                "\\( 2 \\)",
+                "\\( \\frac{15}{4} \\)",
+                "\\( \\frac{7}{8} \\)"
+            ],
+            correct: 0,
+            explanation: "نستخدم التعويض: \\( u = x^2 + 1 \\implies du = 2x \, dx \\implies x \, dx = du/2 \\). نغير حدود التكامل: عند \\( x=0 \\implies u=1 \\)، وعند \\( x=1 \\implies u=2 \\). التكامل يتحول لـ: \\( \\int_{1}^{2} u^3 \\frac{du}{2} = \\frac{1}{2} [\\frac{u^4}{4}]_{1}^{2} = \\frac{1}{8} (16 - 1) = \\frac{15}{8} \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Find \\( \\int x^2 \\ln(x) \, dx \\) using Integration by Parts.",
+            options: [
+                "\\( \\frac{x^3}{3}\\ln(x) - \\frac{x^3}{9} + C \\)",
+                "\\( \\frac{x^3}{3}\\ln(x) - \\frac{x^3}{3} + C \\)",
+                "\\( x^3\\ln(x) - x^3 + C \\)",
+                "\\( \\frac{x^3}{3}\\ln(x) + C \\)"
+            ],
+            correct: 0,
+            explanation: "نفرض دايماً الـ ln هي الـ u للتخلص منها بالتفاضل: \\( u = \\ln(x) \\implies du = \\frac{1}{x}dx \\)، ونفرض \\( dv = x^2 dx \\implies v = \\frac{x^3}{3} \\). نطبق قانون التجزيء: \\( \\frac{x^3}{3}\\ln(x) - \\int \\frac{x^3}{3} \\cdot \\frac{1}{x} dx = \\frac{x^3}{3}\\ln(x) - \\frac{1}{3} \\int x^2 dx = \\frac{x^3}{3}\\ln(x) - \\frac{x^3}{9} + C \\)."
+        },
+        {
+            category: "Lecture 9: Integration Techniques",
+            text: "Evaluate \\( \\int e^x \\sin(x) \, dx \\).",
+            options: [
+                "\\( \\frac{e^x(\\sin(x) - \\cos(x))}{2} + C \\)",
+                "\\( e^x\\cos(x) + C \\)",
+                "\\( \\frac{e^x(\\sin(x) + \\cos(x))}{2} + C \\)",
+                "\\( -e^x\\cos(x) + C \\)"
+            ],
+            correct: 0,
+            explanation: "دي مسألة التكامل الدوري الشهيرة اللي بنعمل فيها تجزيء مرتين وبتظهر نفس الدالة الأصلية تانى فننقلها الناحية التانية باشارة مخالفة ونقسم على 2. والنتيجة دايماً تطلع نص الدالة الأسية مضروبة في (ساين ناقص كوزين)."
+        },
+
+        // ==================== LECTURE 10: Trigonometric Substitution ====================
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "To evaluate \\( \\int \\frac{1}{\\sqrt{4 - x^2}} \, dx \\), which trigonometric substitution is most appropriate?",
+            options: [
+                "\\( x = 2\\tan\\theta \\)",
+                "\\( x = 2\\sin\\theta \\)",
+                "\\( x = 2\\sec\\theta \\)",
+                "\\( x = 4\\sin\\theta \\)"
+            ],
+            correct: 1,
+            explanation: "المقدار تحت الجذر هو على صورة \\( a^2 - x^2 \\) حيث \\( a^2 = 4 \\implies a = 2 \\). التعويض الرياضي الأنسب للتخلص من هذا الجذر هو تعويض الجيب: \\( x = a\\sin\\theta \\implies x = 2\\sin\\theta \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "To evaluate \\( \\int \\sqrt{x^2 + 9} \, dx \\), which trigonometric substitution is most appropriate?",
+            options: [
+                "\\( x = 3\\sin\\theta \\)",
+                "\\( x = 3\\tan\\theta \\)",
+                "\\( x = 3\\sec\\theta \\)",
+                "\\( x = 9\\tan\\theta \\)"
+            ],
+            correct: 1,
+            explanation: "المقدار تحت الجذر هو على صورة جمع \\( x^2 + a^2 \\) حيث \\( a^2 = 9 \\implies a = 3 \\). التعويض الأنسب للتخلص من الجمع والاستفادة من متطابقة فيثاغورس هو دالة الظل: \\( x = a\\tan\\theta \\implies x = 3\\tan\\theta \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "To evaluate \\( \\int \\frac{\\sqrt{x^2 - 16}}{x} \, dx \\point \\) which substitution is most appropriate?",
+            options: [
+                "\\( x = 4\\sin\\theta \\)",
+                "\\( x = 4\\tan\\theta \\)",
+                "\\( x = 4\\sec\\theta \\)",
+                "\\( x = 16\\sec\\theta \\)"
+            ],
+            correct: 2,
+            explanation: "المقدار تحت الجذر هو على صورة متغير تربيع ناقص ثابت تربيع \\( x^2 - a^2 \\) حيث \\( a^2 = 16 \\implies a = 4 \\). التعويض الأنسب هنا هو دالة القاطع: \\( x = a\\sec\\theta \\implies x = 4\\sec\\theta \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "Evaluate the integral \\( \\int \\frac{1}{\\sqrt{9 - x^2}} \, dx \\).",
+            options: [
+                "\\( \\sin^{-1}(x/3) + C \\)",
+                "\\( 3\\sin^{-1}(x/3) + C \\)",
+                "\\( \\frac{1}{3}\\sin^{-1}(x/3) + C \\)",
+                "\\( \\tan^{-1}(x/3) + C \\)"
+            ],
+            correct: 0,
+            explanation: "دي الصورة القياسية للمشتقة العكسية لدالة الساين العكسية (inverse sine) مع وجود الثابت a=3. القانون بيقول مباشرة: \\( \\sin^{-1}(x/a) + C \\)، وبالتالي تصبح \\( \\sin^{-1}(x/3) + C \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "Evaluate the integral \\( \\int \\frac{1}{x^2 + 25} \, dx \\).",
+            options: [
+                "\\( \\tan^{-1}(x/5) + C \\)",
+                "\\( \\frac{1}{5}\\tan^{-1}(x/5) + C \\)",
+                "\\( 5\\tan^{-1}(x/5) + C \\)",
+                "\\( \\frac{1}{5}\\sin^{-1}(x/5) + C \\)"
+            ],
+            correct: 1,
+            explanation: "دي الصورة القياسية لتكامل دالة التان العكسية (inverse tangent). القانون العام: \\( \\int \\frac{1}{x^2 + a^2} \, dx = \\frac{1}{a} \\tan^{-1}(x/a) + C \\). بما أن \\( a^2 = 25 \\implies a = 5 \\)، تكون النتيجة \\( \\frac{1}{5}\\tan^{-1}(x/5) + C \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "Under the substitution \\( x = a\\tan\\theta \\), the differential element \\( dx \\) becomes:",
+            options: [
+                "\\( a\\sec\\theta \, d\\theta \\)",
+                "\\( a\\sec^2\\theta \, d\\theta \\)",
+                "\\( a\\tan^2\\theta \, d\\theta \\)",
+                "\\( a\\cos\\theta \, d\\theta \\)"
+            ],
+            correct: 1,
+            explanation: "عندما نفرض أن \\( x = a\\tan\\theta \\) ونقوم بالتفاضل للطرفين بالنسبة لـ \\( \\theta \\)، فإن مشتقة الظل (tan) هي القاطع تربيع (sec squared)، فتصبح \\( dx = a\\sec^2\\theta \, d\\theta \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "Under the substitution \\( x = a\\sin\\theta \\), what does the square root term \\( \sqrt{a^2 - x^2} \\) simplify to (assuming \\( a > 0 \\) and \\( \\theta \\in [-\\pi/2, \\pi/2] \\))?",
+            options: [
+                "\\( a\\sin\\theta \\)",
+                "\\( a\\cos\\theta \\)",
+                "\\( a\\tan\\theta \\)",
+                "\\( a\\sec\\theta \\)"
+            ],
+            correct: 1,
+            explanation: "نعوض بـ x: \\( \\sqrt{a^2 - a^2\\sin^2\\theta} = \\sqrt{a^2(1 - \\sin^2\\theta)} = \\sqrt{a^2\\cos^2\\theta} = a\\cos\\theta \\). وخرجت باشارة موجبة تماماً لأن الكوزين موجبة في الربع الأول والرابع."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "Evaluate the integral \\( \\int \\frac{x}{\\sqrt{1 - x^2}} \, dx \\).",
+            options: [
+                "\\( \\sin^{-1}(x) + C \\)",
+                "\\( -\\sqrt{1 - x^2} + C \\)",
+                "\\( -2\\sqrt{1 - x^2} + C \\)",
+                "\\( \\sqrt{1 - x^2} + C \\)"
+            ],
+            correct: 1,
+            explanation: "خد بالك يا هندسة! المسألة دي تتحل برضه بالتعويض العادي (u-sub) بشكل أسرع وأسهل بكتير لأن البسط هو تفاضل ما تحت الجذر (تقريباً). نفرض \\( u = 1 - x^2 \\implies du = -2x \, dx \\implies x \, dx = -du/2 \\). فتتحول لـ: \\( \\int \\frac{-du/2}{\\sqrt{u}} = -\\sqrt{u} + C = -\\sqrt{1 - x^2} + C \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "If \\( x = 3\\sec\\theta \\), then what is \\( \\tan\\theta \\) in terms of \\( x \\) (assuming \\( x > 3 \\))?",
+            options: [
+                "\\( \\frac{\\sqrt{x^2 - 9}}{3} \\)",
+                "\\( \\frac{\\sqrt{9 - x^2}}{3} \\)",
+                "\\( \\frac{3}{\\sqrt{x^2 - 9}} \\)",
+                "\\( \\sqrt{x^2 - 9} \\)"
+            ],
+            correct: 0,
+            explanation: "من الفرض: \\( \\sec\\theta = \\frac{x}{3} \\) (الوتر / المجاور). برسم المثلث المرجعي قائم الزاوية: الوتر هو \\( x \\) والمجاور هو 3. بفيثاغورس، الضلع المقابل للزاوية هو \\( \\sqrt{x^2 - 9} \\). وبما أن \\( \\tan\\theta = \\frac{\\text{المقابل}}{\\text{المجاور}} \\)، فإنها تساوي \\( \\frac{\\sqrt{x^2 - 9}}{3} \\)."
+        },
+        {
+            category: "Lecture 10: Trigonometric Substitution",
+            text: "If \\( x = 5\\sin\\theta \\), then what is \\( \\cos\\theta \\) in terms of \\( x \\) (assuming \\( \\theta \\) is in the first quadrant)?",
+            options: [
+                "\\( \\frac{\\sqrt{25 - x^2}}{5} \\)",
+                "\\( \\frac{\\sqrt{x^2 - 25}}{5} \\)",
+                "\\( \\frac{5}{\\sqrt{25 - x^2}} \\)",
+                "\\( \\frac{\\sqrt{25 - x^2}}{x} \\)"
+            ],
+            correct: 0,
+            explanation: "من الفرض: \\( \\sin\\theta = \\frac{x}{5} \\) (المقابل / الوتر). برسم المثلث المرجعي: المقابل هو \\( x \\) والوتر هو 5. بفيثاغورس، الضلع المجاور للزاوية هو \\( \\sqrt{25 - x^2} \\). وبما أن \\( \\cos\\theta = \\frac{\\text{المجاور}}{\\text{الوتر}} \\)، فإنها تساوي \\( \\frac{\\sqrt{25 - x^2}}{5} \\)."
+        }
     ];
+
+    // Shuffle helper to make the simulator dynamic (optional but highly premium, let's keep array order or optionally shuffle)
+    // To maintain chronological structure across lectures, we will keep the exact sorted order so students can trace their progress!
 
     let currentQ = 0;
     let score = 0;
-    const totalQ = 100; // Hardcoded to 100 as requested, even if array is smaller currently
+    const totalQ = questions.length; // Dynamic base on array length which is exactly 100!
 
     const container = document.getElementById('quiz-container');
     const scoreSpan = document.getElementById('scoreVal');
     const countSpan = document.getElementById('qCount');
+    const pBar = document.getElementById('pBar');
 
     function loadQuestion() {
-        if(currentQ >= questions.length || currentQ >= totalQ) {
+        if(currentQ >= totalQ) {
             showResults();
             return;
         }
+
+        // Update progress bar
+        const progressPercentage = (currentQ / totalQ) * 100;
+        pBar.style.width = `${progressPercentage}%`;
 
         countSpan.innerText = currentQ + 1;
 
@@ -326,13 +1541,16 @@
         });
 
         container.innerHTML = `
-            <div class="question-card active">
+            <div class="question-card">
+                <div class="category-badge">${q.category}</div>
                 <div class="question-text">${currentQ + 1}. ${q.text}</div>
                 <div class="options-grid">
                     ${optionsHTML}
                 </div>
                 <div class="feedback-box" id="feedback"></div>
-                <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Next Question ➡️</button>
+                <div style="text-align: left;">
+                    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">السؤال التالي ➡️</button>
+                </div>
             </div>
         `;
         
@@ -344,7 +1562,7 @@
         const feedback = document.getElementById('feedback');
         const nextBtn = document.getElementById('nextBtn');
 
-        // Disable all buttons
+        // Disable all buttons to freeze the answer
         btns.forEach(b => b.disabled = true);
 
         // Check if correct
@@ -352,14 +1570,14 @@
             btns[selectedIndex].classList.add('correct');
             score++;
             scoreSpan.innerText = score;
-            feedback.innerHTML = `<span style="color: var(--neon-lime); font-weight: bold;">✅ صح!</span><br><br>${questions[currentQ].explanation}`;
-            feedback.style.background = 'rgba(57, 255, 20, 0.1)';
+            feedback.innerHTML = `<span style="color: var(--neon-lime); font-weight: bold; font-size: 1.25rem;">✅ الله عليك يا هندسة! إجابة صحيحة.</span><br><br>${questions[currentQ].explanation}`;
+            feedback.style.background = 'rgba(57, 255, 20, 0.08)';
             feedback.style.border = '1px solid var(--neon-lime)';
         } else {
             btns[selectedIndex].classList.add('wrong');
             btns[correctIndex].classList.add('correct'); // Highlight the correct one
-            feedback.innerHTML = `<span style="color: var(--neon-red); font-weight: bold;">❌ غلط! ركز:</span><br><br>${questions[currentQ].explanation}`;
-            feedback.style.background = 'rgba(255, 42, 42, 0.1)';
+            feedback.innerHTML = `<span style="color: var(--neon-red); font-weight: bold; font-size: 1.25rem;">❌ ركز يا هندسة، الإجابة غير صحيحة.</span><br><br>${questions[currentQ].explanation}`;
+            feedback.style.background = 'rgba(255, 42, 42, 0.08)';
             feedback.style.border = '1px solid var(--neon-red)';
         }
 
@@ -375,16 +1593,32 @@
     }
 
     function showResults() {
+        pBar.style.width = `100%`;
         document.getElementById('topBar').style.display = 'none';
+        document.getElementById('progContainer').style.display = 'none';
         document.getElementById('quiz-container').style.display = 'none';
         
         const results = document.getElementById('results-container');
+        const comment = document.getElementById('performance-comment');
         results.style.display = 'block';
         
         document.getElementById('finalScore').innerText = score;
+
+        // Custom Egyptian engineering encouraging comments based on performance
+        if(score === 100) {
+            comment.innerHTML = "🏆 <b>امتياز مع مرتبة الشرف الأولى!</b> أنت أسطورة في التفاضل والتكامل يا هندسة. مفيش سؤال قدر يقف قدامك، تفكير ميكانيكي منظم وسرعة بديهة خيالية. أنت فخر لكلية الهندسة وكل الدكاترة يتمنوا طالب زيك! 🎉";
+        } else if(score >= 85) {
+            comment.innerHTML = "🔥 <b>تقدير امتياز (Excellent)!</b> برافو جداً يا هندسة، نتيجتك ممتازة وبتدل على فهم عميق جداً لكل الدروس من الدوال والنهايات لحد التكامل بالتجزيء والتعويض المثلثي. شوية تركيز بسيط جداً وتجيب الـ 100/100 المرة الجاية!";
+        } else if(score >= 70) {
+            comment.innerHTML = "😎 <b>تقدير جيد جداً (Very Good)!</b> أداء بطل ومحترم جداً. أنت فاهم الأساسيات بشكل قوي وعندك قدرة كويسة على التعامل مع المسائل الصعبة. راجع المسائل اللي غلطت فيها وراجع قوانين التكامل وهي تثبت أكتر في دماغك.";
+        } else if(score >= 50) {
+            comment.innerHTML = "👍 <b>تقدير جيد (Pass)!</b> عديت يا هندسة ونجحت في الاختبار الشامل، وده في حد ذاته إنجاز لأن منهج Math 1 محتاج مجهود كبير. أنصحك تاخد جولة سريعة في المحاضرات تراجع القوانين وتعيد الامتحان تانى عشان ترفع مجموعك للامتياز.";
+        } else {
+            comment.innerHTML = "💪 <b>شد حيلك يا هندسة!</b> النتيجة مش هي النهاية، المنهج طويل ودسم ومحتاج تدريب كتير بإيدك. ادخل على محاضرات الشرح واقرأ خطوات حل المسائل المقالية تانى بتركيز، وأنا واثق إنك المرة الجاية هتقفل الامتحان وتكتسحه!";
+        }
     }
 
-    // Start the exam
+    // Start the exam automatically
     window.onload = loadQuestion;
 
 </script>

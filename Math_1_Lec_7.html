@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 7: Inverse Trig & Hyperbolic Derivatives</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 7<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Inverse Trig & Hyperbolic Derivatives</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>النهاردة هندرس تفاضل الدوال المثلثية العكسية (Inverse Trigonometric)، والدوال الزائدية (Hyperbolic Functions) والعكسية ليها، مع إثباتات كاملة ومسائل امتحانات.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Inverse Trigonometric</td><td>الدوال المثلثية العكسية</td><td>زي $\sin^{-1} x$ و $\tan^{-1} x$، بتجيب الزاوية بمعلومية قيمتها.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Hyperbolic Functions</td><td>الدوال الزائدية</td><td>دوال شبيهة بالمثلثية بس بتتعرف بالدوال الأسية $e^x$ و $e^{-x}$، زي $\sinh x$ و $\cosh x$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Inverse Hyperbolic</td><td>الدوال الزائدية العكسية</td><td>عكس الدوال الزائدية، وتفاضلها بيدي دوال كسرية تحت الجذر.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Fundamental Identity</td><td>المتطابقة الأساسية</td><td>المتطابقة الشهيرة للدوال الزائدية: $\cosh^2 x - \sinh^2 x = 1$.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: INVERSE TRIG DERIVATIVES -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. تفاضل الدوال المثلثية العكسية (Inverse Trig Derivatives)</h2>
+        <p>يا هندسة، دي القوانين الذهبية الستة لتفاضل الدوال المثلثية العكسية. احفظهم زي اسمك، والتفاضل لـ $f(x)$ دايماً بتضرب في $f'(x)$ فوق:</p>
+        
+        <table dir="ltr">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>$\sin^{-1} x$</td>
+                    <td class="highlight-cyan">$\frac{1}{\sqrt{1-x^2}}$</td>
+                    <td>$\cos^{-1} x$</td>
+                    <td class="highlight-magenta">$-\frac{1}{\sqrt{1-x^2}}$</td>
+                </tr>
+                <tr>
+                    <td>$\tan^{-1} x$</td>
+                    <td class="highlight-cyan">$\frac{1}{1+x^2}$</td>
+                    <td>$\cot^{-1} x$</td>
+                    <td class="highlight-magenta">$-\frac{1}{1+x^2}$</td>
+                </tr>
+                <tr>
+                    <td>$\sec^{-1} x$</td>
+                    <td class="highlight-cyan">$\frac{1}{|x|\sqrt{x^2-1}}$</td>
+                    <td>$\csc^{-1} x$</td>
+                    <td class="highlight-magenta">$-\frac{1}{|x|\sqrt{x^2-1}}$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Examples:</strong>
+            \begin{align*}
+            & \bullet \ y = \sin^{-1}(x^2) \implies y' = \frac{1}{\sqrt{1-(x^2)^2}} \cdot (2x) = \textcolor{lime}{\frac{2x}{\sqrt{1-x^4}}} \\
+            & \bullet \ y = \tan^{-1}(\sqrt{x}) \implies y' = \frac{1}{1+(\sqrt{x})^2} \cdot \left(\frac{1}{2\sqrt{x}}\right) = \textcolor{lime}{\frac{1}{2\sqrt{x}(1+x)}} \\
+            & \bullet \ y = \tan^{-1}(x^3) \implies y' = \frac{1}{1+(x^3)^2} \cdot (3x^2) = \textcolor{lime}{\frac{3x^2}{1+x^6}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 2: HYPERBOLIC FUNCTIONS -->
+    <div class="glass-card neon-border-lime">
+        <h2>⚡ 2. الدوال الزائدية (Hyperbolic Functions)</h2>
+        <p>الدوال الزائدية بتتعرف بدلالة الـ $e^x$ والـ $e^{-x}$، وقوانينها قريبة جداً من حساب المثلثات العادي بس مع بعض الاختلافات البسيطة في الإشارات:</p>
+        
+        <div dir="ltr" class="math-box">
+            \[ \sinh x = \frac{e^x - e^{-x}}{2} \quad , \quad \cosh x = \frac{e^x + e^{-x}}{2} \quad , \quad \tanh x = \frac{e^x - e^{-x}}{e^x + e^{-x}} \]
+        </div>
+
+        <h3>قوانين تفاضل الدوال الزائدية:</h3>
+        <table dir="ltr">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>$\sinh x$</td>
+                    <td class="highlight-lime">$\cosh x$</td>
+                    <td>$\text{csch } x$</td>
+                    <td class="highlight-magenta">$-\text{csch } x \coth x$</td>
+                </tr>
+                <tr>
+                    <td>$\cosh x$</td>
+                    <td class="highlight-lime">$\sinh x$</td>
+                    <td>$\text{sech } x$</td>
+                    <td class="highlight-magenta">$-\text{sech } x \tanh x$</td>
+                </tr>
+                <tr>
+                    <td>$\tanh x$</td>
+                    <td class="highlight-lime">$\text{sech}^2 x$</td>
+                    <td>$\coth x$</td>
+                    <td class="highlight-magenta">$-\text{csch}^2 x$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p dir="rtl">📌 <b>خد بالك يا هندسة:</b> تفاضل الـ $\cosh$ موجب (مش سالب زي الـ $\cos$ في المثلثات العادية!). بينما تفاضل مقلوبات الدوال الزائدية ($\text{sech}, \text{csch}, \coth$) دايماً بيدي إشارة سالبة.</p>
+    </div>
+
+    <!-- PART 3: INVERSE HYPERBOLIC FUNCTIONS -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. الدوال الزائدية العكسية (Inverse Hyperbolic Functions)</h2>
+        <p>دي القوانين الخاصة بالدوال الزائدية العكسية. شبه قوانين المثلثية العكسية جداً بس إشارتها وضبطها مختلفين:</p>
+        
+        <table dir="ltr">
+            <thead>
+                <tr>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                    <th>Function</th>
+                    <th>Derivative</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>$\sinh^{-1} x$</td>
+                    <td class="highlight-purple">$\frac{1}{\sqrt{x^2+1}}$</td>
+                    <td>$\text{csch}^{-1} x$</td>
+                    <td class="highlight-magenta">$-\frac{1}{|x|\sqrt{1+x^2}}$</td>
+                </tr>
+                <tr>
+                    <td>$\cosh^{-1} x$</td>
+                    <td class="highlight-purple">$\frac{1}{\sqrt{x^2-1}}$</td>
+                    <td>$\text{sech}^{-1} x$</td>
+                    <td class="highlight-magenta">$-\frac{1}{x\sqrt{1-x^2}}$</td>
+                </tr>
+                <tr>
+                    <td>$\tanh^{-1} x$</td>
+                    <td class="highlight-purple">$\frac{1}{1-x^2}$</td>
+                    <td>$\coth^{-1} x$</td>
+                    <td class="highlight-magenta">$\frac{1}{1-x^2}$</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Examples:</strong>
+            \begin{align*}
+            & \bullet \ y = \sinh^{-1}(x^2) \implies y' = \frac{1}{\sqrt{(x^2)^2+1}} \cdot (2x) = \textcolor{lime}{\frac{2x}{\sqrt{x^4+1}}} \\
+            & \bullet \ y = \tanh^{-1}(\sqrt{x}) \implies y' = \frac{1}{1-(\sqrt{x})^2} \cdot \left(\frac{1}{2\sqrt{x}}\right) = \textcolor{lime}{\frac{1}{2\sqrt{x}(1-x)}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 4: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 4. Interactive MCQs (اختبر نفسك - 5 أسئلة)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تفاضل التان ماينس وان مضروبة في تفاضل الزاوية.</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: Find the derivative of \( f(x) = \tan^{-1}(x^3) \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( \frac{3x^2}{1+x^3} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) \( \frac{3x^2}{1+x^6} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) \( \frac{1}{1+x^6} \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                قانون $\tan^{-1} u$ هو $\frac{u'}{1+u^2}$. هنا $u = x^3$ ومربعها $x^6$ وتفاضلها $3x^2$. إذن النتيجة: $\frac{3x^2}{1+x^6}$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">أهم هوية في الدوال الزائدية.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: Which of the following is the fundamental hyperbolic identity?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) \( \cosh^2 x + \sinh^2 x = 1 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) \( \cosh^2 x - \sinh^2 x = 1 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) \( \tanh^2 x - 1 = \text{sech}^2 x \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                في حساب المثلثات العادي $\cos^2 x + \sin^2 x = 1$، بينما في الدوال الزائدية الهوية هي $\cosh^2 x - \sinh^2 x = 1$.
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تفاضل التانش.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: What is the derivative of \( y = \tanh(x^4) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">A) \( 4x^3 \text{sech}^2(x^4) \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) \( \text{sech}^2(x^4) \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) \( -4x^3 \text{csch}^2(x^4) \)</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                تفاضل $\tanh u$ هو $u' \text{sech}^2 u$. بما أن $u = x^4$ وتفاضله $4x^3$، النتيجة هي $4x^3 \text{sech}^2(x^4)$.
+            </div>
+        </div>
+
+        <!-- Q4 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تفاضل الشاين ماينس وان.</p>
+            <h3 dir="ltr" style="text-align: left;">Q4: Find the derivative of \( y = \sinh^{-1}(x^2) \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">A) \( \frac{2x}{\sqrt{x^2+1}} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q4_exp')">B) \( \frac{2x}{\sqrt{x^4+1}} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q4_exp')">C) \( \frac{1}{\sqrt{x^4-1}} \)</button>
+            </div>
+            <div id="q4_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                تفاضل $\sinh^{-1} u$ هو $\frac{u'}{\sqrt{u^2+1}}$. بما أن $u = x^2$ ومربعها $x^4$ وتفاضلها $2x$، النتيجة $\frac{2x}{\sqrt{x^4+1}}$.
+            </div>
+        </div>
+
+        <!-- Q5 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">تبسيط المثلثات العكسية بالرسم والمثلث القائم.</p>
+            <h3 dir="ltr" style="text-align: left;">Q5: Simplify the expression \( \cos(\tan^{-1} x) \):</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q5_exp')">A) \( \frac{1}{\sqrt{1+x^2}} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">B) \( \frac{x}{\sqrt{1+x^2}} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q5_exp')">C) \( \sqrt{1-x^2} \)</button>
+            </div>
+            <div id="q5_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                لو فرضنا $\theta = \tan^{-1} x \implies \tan \theta = x = \frac{x}{1}$ (المقابل $x$ والمجاور $1$).<br>
+                من فيثاغورس، الوتر $\sqrt{1+x^2}$.<br>
+                المطلوب هو $\cos \theta = \frac{\text{المجاور}}{\text{الوتر}} = \frac{1}{\sqrt{1+x^2}}$.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 5: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 5. Problem Solving (مسائل امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">إثبات قانون تفاضل الساين ماينس وان.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Prove that: <br>
+                \( \frac{d}{dx}[\sin^{-1} x] = \frac{1}{\sqrt{1-x^2}} \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <p dir="rtl">الإثبات ده بيجي كتير جداً في الامتحانات عشان يختبر فهمك للاشتقاق الضمني، ركز معايا في الخطوات الأنيقة دي:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Let } y = \sin^{-1} x \\[5pt]
+&\text{2. Take } \sin \text{ of both sides to cancel the inverse:} \\
+&\sin y = \sin(\sin^{-1} x) \implies \sin y = x \\[10pt]
+&\text{3. Differentiate implicitly with respect to } x: \\
+&\cos y \cdot y' = 1 \implies y' = \frac{1}{\cos y} \\[10pt]
+&\text{4. Convert } \cos y \text{ back into terms of } x \text{ using identity } \sin^2 y + \cos^2 y = 1: \\
+&\cos^2 y = 1 - \sin^2 y \implies \cos y = \sqrt{1 - \sin^2 y} \\
+&\text{Since } \sin y = x, \text{ we substitute it in:} \\
+&\cos y = \sqrt{1 - x^2} \\[10pt]
+&\text{5. Substitute back into the derivative equation:} \\
+&\textcolor{lime}{y' = \frac{1}{\sqrt{1 - x^2}}}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">شفت سهولته؟ إثبات رياضي دقيق بخطوات واضحة ومقنعة 100%.</p>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">مسألة سلسلة مركبة غاية في الروعة.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Find the derivative of the function: <br>
+                \( y = \tanh^6(\sqrt{x^4 + 5x^3}) \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">المسألة دي تطبيق عملاق على قاعدة السلسلة (Chain Rule). هنفككها لـ 4 مستويات من الخارج للداخل:</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Outer Power Rule (الأس 6):} \\
+&y' = 6 \tanh^5(\sqrt{x^4 + 5x^3}) \cdot \frac{d}{dx}[\tanh(\sqrt{x^4 + 5x^3})] \\[12pt]
+
+&\text{2. Derivative of } \tanh u \text{ (الدالة زائدية):} \\
+&\frac{d}{dx}[\tanh(\sqrt{x^4 + 5x^3})] = \text{sech}^2(\sqrt{x^4 + 5x^3}) \cdot \frac{d}{dx}[\sqrt{x^4 + 5x^3}] \\[12pt]
+
+&\text{3. Derivative of the square root (الجذر):} \\
+&\frac{d}{dx}[\sqrt{x^4 + 5x^3}] = \frac{1}{2\sqrt{x^4 + 5x^3}} \cdot \frac{d}{dx}[x^4 + 5x^3] \\[12pt]
+
+&\text{4. Derivative of the inside polynomial (كثيرة الحدود):} \\
+&\frac{d}{dx}[x^4 + 5x^3] = 4x^3 + 15x^2 \\[12pt]
+
+&\text{5. Assemble everything together (اجمع السلسلة كاملة):} \\
+&\textcolor{lime}{y' = 6 \tanh^5(\sqrt{x^4 + 5x^3}) \cdot \text{sech}^2(\sqrt{x^4 + 5x^3}) \cdot \frac{4x^3 + 15x^2}{2\sqrt{x^4 + 5x^3}}}
+\end{align*}
+$$
+                </div>
+                <p dir="rtl" style="margin-top: 10px; color: var(--neon-lime);">تفكيك احترافي يضمن الدرجة النهائية بالكامل وبدون أي لغبطة في الامتحان!</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

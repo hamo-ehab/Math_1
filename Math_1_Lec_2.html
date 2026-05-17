@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 2: Inverse & Composition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 2<br><span style="font-size: 0.6em; color: var(--neon-cyan);">Inverse & Composition</span></h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>بعد ما فهمنا الدوال، هندخل ليفل الوحش ونلعب في الدالة نفسها، نعكسها أو نركب دالتين جوة بعض!</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">One-to-One Function</td><td>دالة أحادية</td><td>كل مخرج ($y$) ليه مدخل واحد بس ($x$). مفيش اتنين $x$ بيطلعوا نفس الـ $y$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Horizontal Line Test</td><td>اختبار الخط الأفقي</td><td>عشان نتأكد الدالة One-to-One ولا لأ.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Inverse Function ($f^{-1}$)</td><td>الدالة العكسية</td><td>دالة بتعكس الشغل.. اللي كان Range بيبقى Domain والعكس!</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Composition of Functions</td><td>تركيب الدوال</td><td>إننا ناخد دالة كاملة ونعوض بيها جوة الـ $x$ بتاعت دالة تانية ($f \circ g$).</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: ONE-TO-ONE -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. الدالة الأحادية (One-to-One Function)</h2>
+        <p>بص يا هندسة، الدالة العادية ممكن رقمين مختلفين للـ $x$ يطلعوا نفس النتيجة للـ $y$ (زي الـ $x^2$، الـ $2$ والـ $-2$ بيطلعوا $4$).</p>
+        <p>إنما الدالة الأحادية (One-to-One) <span class="highlight-magenta">مفيهاش الكلام ده!</span> كل $x$ بتطلع $y$ مختلفة تماماً. لو ده محصلش، الدالة دي <span class="highlight-red">ملهاش دالة عكسية (Inverse).</span></p>
+
+        <h3>📏 اختبار الخط الأفقي (The Horizontal Line Test)</h3>
+        <p>زي ما عملنا خط رأسي المرة اللي فاتت عشان نعرف هي دالة ولا لأ، المرة دي بنرسم <strong>خط أفقي (Horizontal Line)</strong>.</p>
+        <p>لو الخط الأفقي قطع الرسمة في أكتر من نقطة، يبقى فيه كذا $x$ بيطلعوا نفس الـ $y$.. يبقى <span class="highlight-red">مش One-to-One</span> وملهاش Inverse!</p>
+    </div>
+
+    <!-- PART 2: INVERSE OF A FUNCTION -->
+    <div class="glass-card neon-border-lime">
+        <h2>🔥 2. الدالة العكسية (Inverse Function $f^{-1}$)</h2>
+        <p>الدالة العكسية بتشقلب حال الدالة الأصلية! الـ $x$ بتبقى $y$، والـ $y$ بتبقى $x$.</p>
+        <ul style="list-style-type: none; padding-right: 0;">
+            <li>✅ <span class="highlight-lime">Domain of $f$</span> = <span class="highlight-cyan">Range of $f^{-1}$</span></li>
+            <li>✅ <span class="highlight-cyan">Range of $f$</span> = <span class="highlight-lime">Domain of $f^{-1}$</span></li>
+        </ul>
+        <p>هندسياً، رسمة الدالة العكسية هي نفس رسمة الدالة الأصلية بس <span class="highlight-magenta">معكوسة كأنها في مراية حوالين خط $y = x$.</span></p>
+
+        <h3>كيفية إيجاد الدالة العكسية (Algebraic Steps)</h3>
+        <p>دول الـ 3 خطوات السحرية اللي تحل بيهم أي مسألة Inverse:</p>
+        <ol style="margin-right: 20px;">
+            <li>شيل $f(x)$ واكتب مكانها $y$.</li>
+            <li>بدل كل $x$ بـ $y$، وكل $y$ بـ $x$ (هنا بتحصل الشقلبة).</li>
+            <li>حل المعادلة عشان تخلي الـ $y$ الجديدة في طرف لوحدها، وسميها $f^{-1}(x)$.</li>
+        </ol>
+
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example:</strong> Find the inverse of \( \textcolor{lime}{f(x) = 8x - 2} \)
+            <br><br>
+            <strong>Step-by-step Solution:</strong>
+            \begin{align*}
+            & \text{1. Replace } f(x) \text{ with } y: \\
+            & y = 8x - 2 \\[10pt]
+            & \text{2. Switch } x \text{ and } y: \\
+            & x = 8y - 2 \\[10pt]
+            & \text{3. Solve for the new } y \text{ (Move -2 to the left):} \\
+            & x + 2 = 8y \\[10pt]
+            & \text{4. Divide by 8:} \\
+            & y = \frac{x + 2}{8} \\[10pt]
+            & \text{5. Change to inverse notation:} \\
+            & \textcolor{lime}{f^{-1}(x) = \frac{x + 2}{8}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 3: COMPOSITION OF FUNCTIONS -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. تركيب الدوال (Composition of Functions)</h2>
+        <p>تركيب الدوال بنرمزله بالرمز $(f \circ g)(x)$. ومعناها إنك <span class="highlight-purple">بتاخد الدالة $g$ كلها تحطها مكان الـ $x$ اللي في الدالة $f$.</span></p>
+        <p>خد بالك إن $(f \circ g)$ مش هي هي $(g \circ f)$. الترتيب بيفرق جداً!</p>
+        
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example:</strong> If \( f(x) = x^2 \) and \( g(x) = x - 3 \), find \( (f \circ g)(x) \) and \( (g \circ f)(x) \).
+            <br><br>
+            <strong>1. Find \( (f \circ g)(x) \):</strong>
+            \begin{align*}
+            & (f \circ g)(x) = f(g(x)) \\
+            & \text{Put } g(x) \text{ inside } f: \\
+            & f(\textcolor{cyan}{x - 3}) = (\textcolor{cyan}{x - 3})^2
+            \end{align*}
+            <br>
+            <strong>2. Find \( (g \circ f)(x) \):</strong>
+            \begin{align*}
+            & (g \circ f)(x) = g(f(x)) \\
+            & \text{Put } f(x) \text{ inside } g: \\
+            & g(\textcolor{magenta}{x^2}) = \textcolor{magenta}{x^2} - 3
+            \end{align*}
+        </div>
+
+        <div class="math-box" style="background: rgba(255, 0, 234, 0.1); border-color: var(--neon-magenta);">
+            <h3 style="color: var(--neon-magenta); margin-top: 0;">💡 التكافؤ السحري (Inverse Proof)</h3>
+            <p dir="rtl">لو ركبت الدالتين في بعض $(f \circ g)$ وطلعت النتيجة $x$ صافية، وركبتهم العكس $(g \circ f)$ وطلعت برضو $x$.. يبقى ألف مبروك، <span class="highlight-lime">الدالتين دول Inverses لبعض!</span></p>
+        </div>
+    </div>
+
+    <!-- PART 4: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 4. Interactive MCQs (اختبر نفسك)</h2>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">بنعرف منين إن الرسمة One-to-One أو ليها معكوس؟</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: Which test determines if a function has an inverse?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) Vertical Line Test</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">B) Horizontal Line Test</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">C) Diagonal Line Test</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                عشان الدالة يكون ليها معكوس لازم تكون One-to-One، وده بنختبره بالخط الأفقي (Horizontal Line Test).
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">الدالة العكسية بتشقلب المجال والمدى.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: The Domain of a function \( f \) is exactly the same as:</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">A) The Domain of \( f^{-1} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">B) The Range of \( f^{-1} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) The Range of \( f \)</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: B.</span><br>
+                الـ x بتاعة الدالة الأصلية (Domain) هي هي الـ y بتاعة الدالة العكسية (Range).
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">عوض بالقيم المعطاة وشوف الشقلبة.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: If \( f(3) = 7 \), what is \( f^{-1}(7) \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">A) 3</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) 7</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">C) -3</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">D) 1/7</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A.</span><br>
+                بما إن الدالة بتاخد 3 تطلع 7، إذن الدالة العكسية لو أديتها 7 هترجعك لـ 3 تاني!
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 5: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 5. Problem Solving (أسئلة امتحانات مقالية)</h2>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">سؤال معكوس دالة كسرية، محتاج تركيز في الماث.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1:</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Find the inverse of \( \textcolor{magenta}{f(x) = \frac{3x + 1}{2}} \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Replace } f(x) \text{ with } y: \\[5pt]
+&y = \frac{3x + 1}{2} \\[15pt]
+
+&\text{2. Switch } x \text{ and } y: \\[5pt]
+&x = \frac{3y + 1}{2} \\[15pt]
+
+&\text{3. Multiply both sides by 2:} \\[5pt]
+&2x = 3y + 1 \\[15pt]
+
+&\text{4. Move +1 to the left side:} \\[5pt]
+&2x - 1 = 3y \\[15pt]
+
+&\text{5. Divide by 3:} \\[5pt]
+&y = \frac{2x - 1}{3} \\[15pt]
+
+&\implies \textcolor{lime}{f^{-1}(x) = \frac{2x - 1}{3}}
+\end{align*}
+$$
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem 2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">إثبات إن دالتين عكس بعض باستخدام التركيب Composition.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 2 (Proof):</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Show that \( f \) and \( g \) are inverses of each other, where:<br>
+                \( f(x) = x^3 - 4 \) and \( g(x) = \sqrt[3]{x + 4} \)
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob2_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob2_steps" class="hidden-step">
+                <p dir="rtl">عشان نثبت ده، لازم نجيب $f(g(x))$ ولازم النتيجة تطلع $x$.</p>
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{Calculate } f(g(x)): \\[5pt]
+&f(\textcolor{cyan}{g(x)}) = (\textcolor{cyan}{\sqrt[3]{x + 4}})^3 - 4 \\[15pt]
+
+&\text{The cube power cancels the cube root:} \\[5pt]
+&f(g(x)) = (x + 4) - 4 \\[15pt]
+
+&f(g(x)) = x + 4 - 4 \\[15pt]
+
+&\textcolor{lime}{f(g(x)) = x} \\[15pt]
+
+&\text{Since } f(g(x)) = x \text{ (and similarly } g(f(x)) = x \text{)}, \\
+&\text{they are inverses of each other.}
+\end{align*}
+$$
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

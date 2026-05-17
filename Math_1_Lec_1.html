@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture 1: Functions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Fira+Code:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for LaTeX Rendering -->
+    <script>
+        window.MathJax = {
+            loader: {load: ['[tex]/color']},
+            tex: { 
+                inlineMath: [['$', '$'], ['\\(', '\\)']], 
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['color']}
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --neon-purple: #b026ff;
+            --neon-red: #ff2a2a;
+            --neon-orange: #ff9d00;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+            --text-muted: #a0a0c0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 234, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            line-height: 1.8;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1000px; margin: 0 auto; }
+
+        h1, h2, h3 { font-weight: 900; margin-bottom: 20px; }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 50px;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .neon-border-cyan { border-right: 4px solid var(--neon-cyan); }
+        .neon-border-magenta { border-right: 4px solid var(--neon-magenta); }
+        .neon-border-lime { border-right: 4px solid var(--neon-lime); }
+        .neon-border-purple { border-right: 4px solid var(--neon-purple); }
+        .neon-border-orange { border-right: 4px solid var(--neon-orange); }
+
+        .highlight-cyan { color: var(--neon-cyan); font-weight: bold; }
+        .highlight-magenta { color: var(--neon-magenta); font-weight: bold; }
+        .highlight-lime { color: var(--neon-lime); font-weight: bold; }
+        .arabic-helper { font-family: 'Cairo', sans-serif; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9em; }
+        
+        .math-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.2rem;
+        }
+        .inline-math { direction: ltr; display: inline-block; font-family: 'Fira Code', monospace; }
+
+        /* Tables */
+        table {
+            width: 100%; border-collapse: collapse; margin: 20px 0;
+            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
+        }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); font-weight: 700; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+
+        /* Quiz Buttons */
+        .mcq-options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .mcq-btn {
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main); padding: 15px 20px; border-radius: 10px; cursor: pointer;
+            font-family: 'Poppins', sans-serif; font-size: 1.1rem; text-align: left; transition: all 0.3s;
+            direction: ltr;
+        }
+        .mcq-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); border-color: var(--neon-cyan); }
+        .mcq-btn.correct { background: rgba(57, 255, 20, 0.1); border-color: var(--neon-lime); color: var(--neon-lime); }
+        .mcq-btn.wrong { background: rgba(255, 42, 42, 0.1); border-color: var(--neon-red); color: var(--neon-red); }
+        .mcq-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 15px; padding: 15px; background: rgba(0, 0, 0, 0.3);
+            border-right: 4px solid var(--neon-cyan); border-radius: 8px; animation: fadeIn 0.5s ease;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-magenta));
+            border: none; color: white; padding: 10px 25px; border-radius: 25px;
+            cursor: pointer; font-family: 'Cairo', sans-serif; font-weight: bold; font-size: 1.1rem;
+            margin: 10px 0; transition: 0.3s; box-shadow: 0 0 15px rgba(255, 0, 234, 0.4); display: inline-block;
+        }
+        .reveal-btn:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 0, 234, 0.7); }
+        .hidden-step { display: none; margin-top: 15px; animation: slideDown 0.4s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; transition: 0.3s; display: inline-block;">🏠 الرجوع للقائمة الرئيسية (Index)</a>
+    </div>
+
+    <h1>Math 1 - Lec 1: Functions</h1>
+
+    <!-- GLOSSARY TABLE -->
+    <div class="glass-card neon-border-cyan">
+        <h2>📚 قاموس المصطلحات (Glossary)</h2>
+        <p>بص يا هندسة، الماث مش مجرد حفظ قوانين، ده فهم كونسيبت. منهج الماث 1 كله مبني على الدوال. دي المصطلحات الأساسية اللي هنستخدمها:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>المصطلح (Term)</th>
+                    <th>عربي</th>
+                    <th>المعنى باختصار</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td dir="ltr" class="highlight-cyan">Function</td><td>دالة</td><td>علاقة بين مدخلات (x) ومخرجات (y)، كل مدخل ليه مخرج واحد بس.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Domain ($D$)</td><td>المجال</td><td>كل الأرقام اللي مسموح تعوض بيها مكان الـ $x$ وماتبَوّظش المسألة.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Range ($R$)</td><td>المدى</td><td>كل النواتج الممكنة اللي بتطلعلك في الـ $y$.</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Piecewise Function</td><td>دالة مجزأة</td><td>دالة متقسمة حتت، كل حتة ليها قانون مختلف (زي القيمة المطلقة).</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Even Function</td><td>دالة زوجية</td><td>دالة متماثلة حوالين محور الـ $y$ ($y$-axis).</td></tr>
+                <tr><td dir="ltr" class="highlight-cyan">Odd Function</td><td>دالة فردية</td><td>دالة متماثلة حوالين نقطة الأصل (Origin).</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PART 1: BASICS OF FUNCTIONS -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🔥 1. إيه هي الدالة؟ (What is a Function?)</h2>
+        <p>تخيل الدالة دي <span class="highlight-magenta">زي المكنة (Machine)</span>. إنت بتدخلها رقم من ناحية، بتعمل عليه عمليات حسابية، وتطلعلك رقم تاني من الناحية التانية.</p>
+        
+        <ul style="list-style-type: none; padding-right: 0;">
+            <li><strong class="highlight-cyan">المدخلات (Inputs):</strong> دي الـ $x$ وبنسميها المجال (Domain).</li>
+            <li><strong class="highlight-cyan">المخرجات (Outputs):</strong> دي الـ $f(x)$ أو الـ $y$ وبنسميها المدى (Range).</li>
+        </ul>
+
+        <div dir="ltr" class="math-box">
+            \begin{align*}
+            &\text{Let } f(x) = x^2 + 1 \\
+            &\text{If input } x = 3 \text{ (from Domain)} \\
+            &f(3) = (3)^2 + 1 = 9 + 1 = 10 \text{ (Output in Range)}
+            \end{align*}
+        </div>
+
+        <h3>📏 اختبار الخط الرأسي (The Vertical Line Test)</h3>
+        <p>عشان تحكم على أي رسمة (Graph) هل هي دالة ولا مجرد رسمة عادية، بنعمل اختبار الخط الرأسي:</p>
+        <p>لو رسمت خط رأسي (Vertical Line) في أي مكان على الرسمة، <span class="highlight-lime">لازم يقطع المنحنى في نقطة واحدة بس!</span> لو قطعه في نقطتين، يبقى دي مش دالة (لأن ده معناه إن قيمة واحدة للـ $x$ طلعت قيمتين للـ $y$ وده مستحيل في المكنة بتاعتنا).</p>
+    </div>
+
+    <!-- PART 2: FINDING THE DOMAIN -->
+    <div class="glass-card neon-border-lime">
+        <h2>🔥 2. إزاي نحسب المجال؟ (Finding the Domain)</h2>
+        <p>مبدأياً كده، المجال بتاع أي دالة في الدنيا هو كل الأرقام الحقيقية $\mathbb{R}$... <span class="highlight-red">إلا لو فيه مشكلة!</span></p>
+        <p>المشاكل في الماث بتيجي من حاجتين أساسيتين:</p>
+        
+        <h3>⚠️ المشكلة الأولى: القسمة على صفر (Rational Functions)</h3>
+        <p>لو عندك دالة فيها بسط ومقام (كسر)، المقام استحالة يساوي صفر.</p>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example 1:</strong> Find the domain of \( \textcolor{cyan}{f(x) = \frac{1}{x^2 - 9}} \)
+            <br><br>
+            <strong>Step-by-step Solution:</strong>
+            \begin{align*}
+            & \text{1. The denominator cannot be zero:} \\
+            & x^2 - 9 \neq 0 \\[10pt]
+            & \text{2. Move 9 to the right side:} \\
+            & x^2 \neq 9 \\[10pt]
+            & \text{3. Take the square root of both sides:} \\
+            & \sqrt{x^2} \neq \sqrt{9} \\
+            & x \neq \pm 3 \\[10pt]
+            & \text{4. Write the final Domain:} \\
+            & \textcolor{lime}{\text{Domain } D = \mathbb{R} - \{-3, 3\}}
+            \end{align*}
+        </div>
+
+        <h3>⚠️ المشكلة التانية: الجذور الزوجية (Even Roots)</h3>
+        <p>الجذر التربيعي (أو أي جذر زوجي زي الرابع والسادس) <span class="highlight-magenta">بيكره الأرقام السالبة</span>. اللي تحت الجذر لازم يكون أكبر من أو يساوي صفر.</p>
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example 2:</strong> Find the domain of \( \textcolor{magenta}{f(x) = \sqrt{x - 4}} \)
+            <br><br>
+            <strong>Step-by-step Solution:</strong>
+            \begin{align*}
+            & \text{1. The expression inside the root must be } \geq 0: \\
+            & x - 4 \geq 0 \\[10pt]
+            & \text{2. Solve the inequality (Move 4 to the right):} \\
+            & x \geq 4 \\[10pt]
+            & \text{3. Write the final Domain as an interval:} \\
+            & \textcolor{lime}{\text{Domain } D = [4, \infty)}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 3: EVEN AND ODD FUNCTIONS -->
+    <div class="glass-card neon-border-purple">
+        <h2>🧠 3. الدوال الزوجية والفردية (Even and Odd Functions)</h2>
+        <p>عشان نحدد نوع الدالة جبرياً (Algebraically)، بنعمل حاجة بسيطة جداً: <strong>بنشيل كل $x$ ونحط مكانها $-x$</strong>، ونشوف إيه اللي هيحصل:</p>
+        
+        <table dir="ltr">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Condition</th>
+                    <th>Symmetry (التماثل)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><span class="highlight-cyan">Even Function</span></td><td>$f(-x) = f(x)$</td><td>Symmetric about $y$-axis</td></tr>
+                <tr><td><span class="highlight-magenta">Odd Function</span></td><td>$f(-x) = -f(x)$</td><td>Symmetric about the Origin</td></tr>
+            </tbody>
+        </table>
+
+        <h3>خطوات الحل (The Approach):</h3>
+        <p>الباور الزوجي ($x^2, x^4$) بياكل السالب. الباور الفردي ($x^3, x^5$) بيطرد السالب براه.</p>
+        
+        <div dir="ltr" class="math-box" style="text-align: left;">
+            <strong>Example 3:</strong> Determine whether \( \textcolor{purple}{f(x) = x^5 + x} \) is even, odd, or neither.
+            <br><br>
+            <strong>Step-by-step Solution:</strong>
+            \begin{align*}
+            & \text{1. Substitute } x \text{ with } -x: \\
+            & f(-x) = (-x)^5 + (-x) \\[10pt]
+            & \text{2. Simplify (odd powers keep the negative sign):} \\
+            & f(-x) = -x^5 - x \\[10pt]
+            & \text{3. Take (-1) as a common factor:} \\
+            & f(-x) = -(x^5 + x) \\[10pt]
+            & \text{4. Compare with original } f(x): \\
+            & f(-x) = -f(x) \\[10pt]
+            & \textcolor{lime}{\therefore \text{The function is Odd.}}
+            \end{align*}
+        </div>
+    </div>
+
+    <!-- PART 4: PIECEWISE FUNCTIONS -->
+    <div class="glass-card neon-border-orange">
+        <h2>🔥 4. الدوال المجزأة (Piecewise Defined Functions)</h2>
+        <p>دي دالة مش ماشية على قانون واحد، دي متقسمة فترات. أشهر مثال عليها هو دالة <strong>القيمة المطلقة (Absolute Value)</strong>.</p>
+        
+        <div dir="ltr" class="math-box">
+            f(x) = |x| =
+            \begin{cases} 
+            x & \text{if } x \geq 0 \\
+            -x & \text{if } x < 0 
+            \end{cases}
+        </div>
+        <p>القيمة المطلقة وظيفتها إنها تطلع مسافة، والمسافة دايماً موجبة. فلو الرقم سالب، بنضربه في سالب تاني عشان يبقى موجب!</p>
+    </div>
+
+    <!-- PART 5: INTERACTIVE MCQs -->
+    <div class="glass-card neon-border-cyan">
+        <h2>🎯 5. Interactive MCQs (اختبر نفسك)</h2>
+        <p>بمجرد ما تدوس على الإجابة، هتعرف صح ولا غلط مع السبب بخطوات.</p>
+
+        <!-- Q1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">ركز في شرط الجذر التربيعي!</p>
+            <h3 dir="ltr" style="text-align: left;">Q1: What is the domain of \( f(x) = \sqrt{x} \)?</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">A) \( \mathbb{R} \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">B) \( x > 0 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q1_exp')">C) \( x \geq 0 \)</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q1_exp')">D) \( \mathbb{R} - \{0\} \)</button>
+            </div>
+            <div id="q1_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: C) $x \geq 0$.</span><br>
+                الجذر التربيعي مينفعش جواه رقم سالب. لازم القيمة تكون موجبة أو صفر. إذن $x \geq 0$.
+            </div>
+        </div>
+
+        <!-- Q2 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">جرب تعوض بـ -x وشوف الباور الزوجي هيعمل إيه.</p>
+            <h3 dir="ltr" style="text-align: left;">Q2: The function \( f(x) = x^2 \) is:</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q2_exp')">A) Even</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">B) Odd</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q2_exp')">C) Neither</button>
+            </div>
+            <div id="q2_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: A) Even.</span><br>
+                لو عوضنا بـ $-x$، هيبقى $f(-x) = (-x)^2 = x^2 = f(x)$. الدالة رجعت لأصلها، يبقى زوجية (Even).
+            </div>
+        </div>
+
+        <!-- Q3 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">عشان الرسمة تبقى دالة، لازم قيمة واحدة لـ y لكل x.</p>
+            <h3 dir="ltr" style="text-align: left;">Q3: If a vertical line intersects a curve in two points, then the curve represents:</h3>
+            <div class="mcq-options" dir="ltr">
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">A) An Even Function</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, false, 'q3_exp')">B) An Odd Function</button>
+                <button class="mcq-btn" onclick="checkMCQ(this, true, 'q3_exp')">C) Not a function</button>
+            </div>
+            <div id="q3_exp" class="explanation-box" dir="rtl">
+                <span class="highlight-lime">✅ Correct Answer: C) Not a function.</span><br>
+                اختبار الخط الرأسي (Vertical Line Test) بيقول لو الخط قطع الرسمة في أكتر من نقطة، يبقى دي مش دالة.
+            </div>
+        </div>
+    </div>
+
+    <!-- PART 6: DEEP PROBLEM SOLVING -->
+    <div class="glass-card neon-border-magenta">
+        <h2>🛠️ 6. Problem Solving (أسئلة امتحانات مقالية)</h2>
+        <p>هنا بنكتب خطوات الحل بالتفصيل زي ما الدكاترة بتحب في امتحانات الفاينال.</p>
+
+        <!-- Problem 1 -->
+        <div style="margin-bottom: 40px;">
+            <p class="arabic-helper">سؤال امتحان بيمزج بين دالة كسرية وأسس.</p>
+            <h3 dir="ltr" style="text-align: left;">Problem 1 (Exam Level):</h3>
+            <div dir="ltr" style="text-align: left; margin-bottom: 15px; font-size: 1.2rem;">
+                Determine whether the function \( \textcolor{magenta}{f(x) = \frac{x^3}{x^2 + 1}} \) is even, odd, or neither.
+            </div>
+            
+            <button class="reveal-btn" onclick="revealStep('prob1_steps')">Reveal Solution Steps ⬇️</button>
+            
+            <div id="prob1_steps" class="hidden-step">
+                <div dir="ltr" class="math-box" style="text-align: left;">
+$$
+\begin{align*}
+&\text{1. Start by finding } f(-x): \\[5pt]
+&f(-x) = \frac{(-x)^3}{(-x)^2 + 1} \\[15pt]
+
+&\text{2. Simplify the numerator (odd power keeps negative):} \\[5pt]
+&(-x)^3 = -x^3 \\[15pt]
+
+&\text{3. Simplify the denominator (even power removes negative):} \\[5pt]
+&(-x)^2 + 1 = x^2 + 1 \\[15pt]
+
+&\text{4. Put it back together:} \\[5pt]
+&f(-x) = \frac{-x^3}{x^2 + 1} \\[15pt]
+
+&\text{5. Extract the negative sign out of the fraction:} \\[5pt]
+&f(-x) = -\left(\frac{x^3}{x^2 + 1}\right) \\[15pt]
+
+&\text{6. Compare with the original function } f(x): \\[5pt]
+&f(-x) = -f(x) \\[15pt]
+
+&\implies \textcolor{lime}{\text{Conclusion: The function is an ODD function.}}
+\end{align*}
+$$
+                </div>
+                <p><strong>بالعربي:</strong> الباور الفردي فوق ساب السالب، والباور الزوجي تحت طير السالب. المحصلة النهائية إن الكسر كله اتضرب في سالب من بره. فدي كده تعتبر دالة فردية (Odd).</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="text-align: center; margin-top: 50px; margin-bottom: 20px; font-family: 'Fira Code', monospace; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); font-size: 1.5rem; font-weight: bold;">
+        &lt; Eng. Zain /&gt;
+    </div>
+
+</div>
+
+<!-- Interactive Logic Scripts -->
+<script>
+    function checkMCQ(btn, isCorrect, expId) {
+        let parent = btn.parentElement;
+        let buttons = parent.querySelectorAll('.mcq-btn');
+        
+        buttons.forEach(b => {
+            b.disabled = true;
+            if(b === btn) {
+                if(isCorrect) {
+                    b.classList.add('correct');
+                    b.innerHTML += ' ✅';
+                } else {
+                    b.classList.add('wrong');
+                    b.innerHTML += ' ❌';
+                }
+            }
+            // highlight the correct answer anyway
+            if(b.getAttribute('onclick').includes('true') && b !== btn) {
+                b.classList.add('correct');
+            }
+        });
+        document.getElementById(expId).style.display = 'block';
+        MathJax.typesetPromise();
+    }
+
+    function revealStep(stepId) {
+        let step = document.getElementById(stepId);
+        if(step.style.display === 'none' || step.style.display === '') {
+            step.style.display = 'block';
+            MathJax.typesetPromise();
+        } else {
+            step.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>

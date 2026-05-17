@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math 1 - Master Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070714;
+            --neon-cyan: #00f3ff;
+            --neon-magenta: #ff00ea;
+            --neon-lime: #39ff14;
+            --glass-bg: rgba(20, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #e0e0ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 243, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(255, 0, 234, 0.1) 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Cairo', 'Poppins', sans-serif;
+            padding: 50px 20px;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; text-align: center; }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            margin-bottom: 50px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .lecture-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+        }
+
+        .lecture-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--neon-cyan);
+            opacity: 0.5;
+            transition: 0.3s;
+        }
+
+        .lecture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.2);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+
+        .lecture-card:hover::before { opacity: 1; box-shadow: 0 0 15px var(--neon-cyan); }
+
+        .lecture-card h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .lecture-card span {
+            font-size: 1rem;
+            color: #a0a0c0;
+        }
+
+        /* Exam Simulator Button */
+        .exam-btn-container { margin-top: 20px; }
+        .exam-btn {
+            background: linear-gradient(45deg, #111, #222);
+            color: var(--neon-lime);
+            text-decoration: none;
+            padding: 20px 50px;
+            font-size: 1.8rem;
+            font-weight: 900;
+            border-radius: 50px;
+            border: 2px solid var(--neon-lime);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3), inset 0 0 10px rgba(57, 255, 20, 0.1);
+            transition: all 0.3s;
+            display: inline-block;
+            font-family: 'Cairo', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exam-btn:hover {
+            background: var(--neon-lime);
+            color: #000;
+            box-shadow: 0 0 40px rgba(57, 255, 20, 0.6);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Math 1 Hub</h1>
+    <p class="subtitle">Calculus, Limits, Derivatives, Integrals & Algebra</p>
+
+    <div class="grid">
+        <a href="Math_1_Lec_1.html" class="lecture-card">
+            <h3>Lecture 1</h3>
+            <span>Functions</span>
+        </a>
+        <a href="Math_1_Lec_2.html" class="lecture-card">
+            <h3>Lecture 2</h3>
+            <span>Inverse & Composition</span>
+        </a>
+        <a href="Math_1_Lec_3.html" class="lecture-card">
+            <h3>Lecture 3</h3>
+            <span>Limits & Continuity</span>
+        </a>
+        <a href="#" class="lecture-card" style="opacity: 0.5; cursor: not-allowed;">
+            <h3>Lecture 4</h3>
+            <span>Applications of Derivatives (قريباً)</span>
+        </a>
+        <a href="#" class="lecture-card" style="opacity: 0.5; cursor: not-allowed;">
+            <h3>Lecture 5</h3>
+            <span>Integrals (قريباً)</span>
+        </a>
+        <a href="#" class="lecture-card" style="opacity: 0.5; cursor: not-allowed;">
+            <h3>Lecture 6</h3>
+            <span>Applications of Integrals (قريباً)</span>
+        </a>
+    </div>
+
+    <div class="exam-btn-container">
+        <a href="Math_1_Exam_Simulator.html" class="exam-btn">🚀 Final Exam Simulator (100 Questions)</a>
+    </div>
+
+</div>
+
+</body>
+</html>
